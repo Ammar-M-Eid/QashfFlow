@@ -253,13 +253,13 @@ export default function TrainingSection() {
                                         <div>
                                             <p className="text-gray-400">Final Train Loss</p>
                                             <p className="text-xl font-semibold text-purple-400">
-                                                {trainingResult.final_train_loss.toFixed(6)}
+                                                {trainingResult.final_train_loss.toFixed(10)}
                                             </p>
                                         </div>
                                         <div>
                                             <p className="text-gray-400">Final Val Loss</p>
                                             <p className="text-xl font-semibold text-pink-400">
-                                                {trainingResult.final_val_loss.toFixed(6)}
+                                                {trainingResult.final_val_loss.toFixed(10)}
                                             </p>
                                         </div>
                                         <div>
