@@ -17,6 +17,8 @@ export interface PredictionResult {
         put: number[];
     };
     metrics: PredictionMetrics;
+    /** true when served from notebook reference data (no live backend connected) */
+    demo?: boolean;
 }
 
 export type BackendPredictionResponse =
