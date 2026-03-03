@@ -729,7 +729,7 @@ export default function ModelPipelineDiagram({ modelType }: ModelPipelineDiagram
                                         isQML ? 'Quantum-LSTM Architecture' :
                                             'LSTM Architecture'}
                             </h3>
-                            <div className="relative h-52 bg-gradient-to-br from-purple-900/30 to-pink-900/20 rounded-xl p-3 overflow-hidden">
+                            <div className="relative h-96 bg-gradient-to-br from-purple-900/30 to-pink-900/20 rounded-xl p-3 overflow-hidden">
                                 {isQRC && <QuantumCircuitSVG nPhotons={modelType === 'QRC5' ? 5 : 3} />}
                                 {isHPQRC && <HPQRCArchSVG />}
                                 {isQML && <LSTMArchSVG nPhotons={2} />}

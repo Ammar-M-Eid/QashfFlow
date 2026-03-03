@@ -78,7 +78,7 @@ export default function BenchmarkComparison({
                                 <div className="flex justify-between mb-1">
                                     <span className="text-sm text-gray-400">Live Dataset</span>
                                     <span className="text-sm font-semibold text-white">
-                                        {(liveMetrics.accuracy * 100).toFixed(1)}%
+                                        {(liveMetrics.accuracy * 100).toFixed(10)}%
                                     </span>
                                 </div>
                                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -94,7 +94,7 @@ export default function BenchmarkComparison({
                                 <div className="flex justify-between mb-1">
                                     <span className="text-sm text-gray-400">Research Benchmark</span>
                                     <span className="text-sm font-semibold text-white">
-                                        {(benchmark.accuracy * 100).toFixed(1)}%
+                                        {(benchmark.accuracy * 100).toFixed(10)}%
                                     </span>
                                 </div>
                                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -111,14 +111,14 @@ export default function BenchmarkComparison({
                                     <>
                                         <TrendingUp className="w-4 h-4 text-green-400" />
                                         <span className="text-sm text-green-400">
-                                            +{(accuracyDiff * 100).toFixed(1)}% better
+                                            +{(accuracyDiff * 100).toFixed(10)}% better
                                         </span>
                                     </>
                                 ) : (
                                     <>
                                         <TrendingDown className="w-4 h-4 text-orange-400" />
                                         <span className="text-sm text-orange-400">
-                                            {(accuracyDiff * 100).toFixed(1)}%
+                                            {(accuracyDiff * 100).toFixed(10)}%
                                         </span>
                                     </>
                                 )}
@@ -134,7 +134,7 @@ export default function BenchmarkComparison({
                                 <div className="flex justify-between mb-1">
                                     <span className="text-sm text-gray-400">Live Dataset</span>
                                     <span className="text-sm font-semibold text-white">
-                                        {liveMetrics.inference_time.toFixed(1)} ms
+                                        {liveMetrics.inference_time.toFixed(10)} ms
                                     </span>
                                 </div>
                                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -150,7 +150,7 @@ export default function BenchmarkComparison({
                                 <div className="flex justify-between mb-1">
                                     <span className="text-sm text-gray-400">Research Benchmark</span>
                                     <span className="text-sm font-semibold text-white">
-                                        {benchmark.latency_ms.toFixed(1)} ms
+                                        {benchmark.latency_ms.toFixed(10)} ms
                                     </span>
                                 </div>
                                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -167,14 +167,14 @@ export default function BenchmarkComparison({
                                     <>
                                         <TrendingUp className="w-4 h-4 text-green-400" />
                                         <span className="text-sm text-green-400">
-                                            {Math.abs(latencyDiff).toFixed(1)} ms faster
+                                            {Math.abs(latencyDiff).toFixed(10)} ms faster
                                         </span>
                                     </>
                                 ) : (
                                     <>
                                         <TrendingDown className="w-4 h-4 text-orange-400" />
                                         <span className="text-sm text-orange-400">
-                                            +{latencyDiff.toFixed(1)} ms slower
+                                            +{latencyDiff.toFixed(10)} ms slower
                                         </span>
                                     </>
                                 )}
@@ -190,7 +190,7 @@ export default function BenchmarkComparison({
                                 <div className="flex justify-between mb-1">
                                     <span className="text-sm text-gray-400">Live Dataset</span>
                                     <span className="text-sm font-semibold text-white">
-                                        {liveMetrics.throughput.toFixed(0)}
+                                        {liveMetrics.throughput.toFixed(10)}
                                     </span>
                                 </div>
                                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -206,7 +206,7 @@ export default function BenchmarkComparison({
                                 <div className="flex justify-between mb-1">
                                     <span className="text-sm text-gray-400">Research Benchmark</span>
                                     <span className="text-sm font-semibold text-white">
-                                        {benchmark.throughput.toFixed(0)}
+                                        {benchmark.throughput.toFixed(10)}
                                     </span>
                                 </div>
                                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -223,14 +223,14 @@ export default function BenchmarkComparison({
                                     <>
                                         <TrendingUp className="w-4 h-4 text-green-400" />
                                         <span className="text-sm text-green-400">
-                                            +{throughputDiff.toFixed(0)} pts/sec faster
+                                            +{throughputDiff.toFixed(10)} pts/sec faster
                                         </span>
                                     </>
                                 ) : (
                                     <>
                                         <TrendingDown className="w-4 h-4 text-orange-400" />
                                         <span className="text-sm text-orange-400">
-                                            {Math.abs(throughputDiff).toFixed(0)} pts/sec slower
+                                            {Math.abs(throughputDiff).toFixed(10)} pts/sec slower
                                         </span>
                                     </>
                                 )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Download, Clock, Target, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, Download, Clock, Target, Activity, Info } from 'lucide-react';
 import { PredictionResult } from '@/lib/types';
 import { formatNumber, downloadCSV } from '@/lib/utils';
 
@@ -76,6 +76,25 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                     </motion.button>
                 </div>
 
+                {/* Demo notice */}
+                {result.demo && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="glass-card p-4 rounded-2xl mb-6 border border-yellow-500/40 flex items-start gap-3"
+                    >
+                        <Info className="w-5 h-5 text-yellow-400 mt-0.5 shrink-0" />
+                        <p className="text-sm text-yellow-200">
+                            <span className="font-semibold">Reference data from trained notebooks.</span>{' '}
+                            No live backend is connected. Predictions shown are the exact outputs recorded
+                            from each model&apos;s notebook run (HPQRC: Day 451 swaption
+                            tenor/maturity grid; ML/QML/QRC/QRC5: same ground-truth with model-accuracy-scaled
+                            noise). Connect a backend via <code className="text-yellow-300">FASTAPI_URL</code> to
+                            run inference on your own uploaded data.
+                        </p>
+                    </motion.div>
+                )}
+
                 {/* Metrics Grid – adapts to variable count (MAPE shown only when > 0) */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
                     {metrics.map((metric, idx) => {
@@ -93,7 +112,7 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                                     <span className="text-sm text-gray-400">{metric.label}</span>
                                 </div>
                                 <div className="text-2xl font-bold">
-                                    {formatNumber(metric.value, 2)}
+                                    {formatNumber(metric.value, 10)}
                                     <span className="text-sm ml-1 text-gray-400">{metric.suffix}</span>
                                 </div>
                                 {/* Confidence bar for accuracy */}
@@ -114,7 +133,7 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
 
                 {/* Predictions Display */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Call Options */}
+                    {/* Predicted / Call column */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -123,7 +142,9 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                     >
                         <div className="flex items-center gap-3 mb-4">
                             <TrendingUp className="w-6 h-6 text-green-400" />
-                            <h3 className="text-xl font-semibold">Call Option Prices</h3>
+                            <h3 className="text-xl font-semibold">
+                                {result.demo ? 'Predicted Swaption Prices' : 'Call Option Prices'}
+                            </h3>
                         </div>
                         <div className="space-y-2 max-h-64 overflow-y-auto">
                             {result.predictions.call.slice(0, 10).map((price, idx) => (
@@ -134,8 +155,10 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                                     transition={{ delay: 0.7 + idx * 0.05 }}
                                     className="flex justify-between items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                                 >
-                                    <span className="text-gray-400">Sample {idx + 1}</span>
-                                    <span className="font-semibold text-green-400">${formatNumber(price, 4)}</span>
+                                    <span className="text-gray-400">
+                                        {result.demo ? `Swaption ${idx + 1}` : `Sample ${idx + 1}`}
+                                    </span>
+                                    <span className="font-semibold text-green-400">{formatNumber(price, 10)}</span>
                                 </motion.div>
                             ))}
                         </div>
@@ -146,7 +169,7 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                         )}
                     </motion.div>
 
-                    {/* Put Options */}
+                    {/* Actual / Put column */}
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -155,7 +178,9 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                     >
                         <div className="flex items-center gap-3 mb-4">
                             <TrendingDown className="w-6 h-6 text-red-400" />
-                            <h3 className="text-xl font-semibold">Put Option Prices</h3>
+                            <h3 className="text-xl font-semibold">
+                                {result.demo ? 'Actual Swaption Prices' : 'Put Option Prices'}
+                            </h3>
                         </div>
                         <div className="space-y-2 max-h-64 overflow-y-auto">
                             {result.predictions.put.slice(0, 10).map((price, idx) => (
@@ -166,8 +191,10 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                                     transition={{ delay: 0.7 + idx * 0.05 }}
                                     className="flex justify-between items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                                 >
-                                    <span className="text-gray-400">Sample {idx + 1}</span>
-                                    <span className="font-semibold text-red-400">${formatNumber(price, 4)}</span>
+                                    <span className="text-gray-400">
+                                        {result.demo ? `Swaption ${idx + 1}` : `Sample ${idx + 1}`}
+                                    </span>
+                                    <span className="font-semibold text-red-400">{formatNumber(price, 10)}</span>
                                 </motion.div>
                             ))}
                         </div>

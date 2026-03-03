@@ -80,8 +80,8 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                 <div className="glass-card p-3 rounded-lg">
                     <p className="text-sm font-semibold mb-1">{label}</p>
                     {payload.map((entry: any, index: number) => (
-                        <p key={index} className="text-sm" style={{ color: entry.color }}>
-                            {entry.name}: {entry.value.toFixed(2)}
+                        <p key={index} className="text-sm" style={{ color: '#ffffff' }}>
+                            {entry.name}: {entry.value.toFixed(10)}
                         </p>
                     ))}
                 </div>
@@ -257,7 +257,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                                                 {modelKey === 'QRC5' && 'QRC (5-photon)'}
                                                 {modelKey === 'HPQRC' && 'HPQRC'}
                                             </span>
-                                            <span className="text-gray-400">{time.toFixed(2)} ms</span>
+                                            <span className="text-gray-400">{time.toFixed(10)} ms</span>
                                         </div>
                                         <div className="h-3 bg-white/10 rounded-full overflow-hidden">
                                             <motion.div

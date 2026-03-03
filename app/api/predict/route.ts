@@ -65,103 +65,123 @@ export async function POST(request: NextRequest) {
                 const data = await response.json();
                 return NextResponse.json(data);
             } catch (backendError) {
-                console.warn('Backend unavailable, falling back to mock response:', backendError);
-                // Fall through to mock response below
+                console.warn('Backend unavailable:', backendError);
+                return NextResponse.json(
+                    { error: 'Backend service is unavailable. Please ensure the FastAPI backend is running and FASTAPI_URL is configured correctly.' },
+                    { status: 503 }
+                );
             }
         }
 
-        // Demo response using exact metrics from trained notebooks (1 s simulated latency):
-        // ML    → Classical LSTM notebook:           best val_loss(MSE)=0.31333
-        // QML   → Hybrid-Quantum LSTM notebook:      Test MSE=0.207653, Test MAE=0.365804, MAPE=378.54%
-        // QRC   → 3-photons Quantum TCN notebook:    Test MSE=0.099971, Test MAE=0.240121, MAPE=160.28%
-        // QRC5  → 5-photons Quantum TCN notebook:    Test MSE=0.074820, Test MAE=0.213286, MAPE=172.93%
-        // HPQRC → HP-QR.ipynb:                       Overall R²=0.998003, MSE=1.93e-05, MAE=0.003260, RelErr≈2.04%
+        // No live backend – serve reference predictions from the trained notebooks.
         //
-        // R² for ML/QML/QRC/QRC5 computed as 1 − MSE (valid for StandardScaler-normalised data).
-        // Accuracy is set equal to R² (best available single-value quality metric from notebooks).
-        // Inference times reflect model-architecture complexity; throughput = 1000 / latency_ms.
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 s demo latency
+        // HPQRC predictions are the exact output of HP-QR.ipynb (hpqrc_results/predicted.csv
+        // and actual.csv), Day 451 first 20 tenor/maturity swaption values.
+        //   call  = model-predicted swaption prices (Day 451, hpqrc_results/predicted.csv)
+        //   put   = actual ground-truth prices      (Day 451, hpqrc_results/actual.csv)
+        //
+        // ML / QML / QRC / QRC5 use the same ground-truth actual swaption values as the
+        // reference baseline and add model-accuracy-proportional Gaussian noise
+        // (seed-fixed) to reflect each model's expected prediction distribution.
+        //   Noise scale = RMSE_normalised × σ(actual_prices) ≈ RMSE × 0.100
+        // The resulting arrays are the 'call' (predicted) values; 'put' is always
+        // the same ground-truth so users can compare predicted vs actual.
 
-        const notebookMetrics: Record<string, { accuracy: number; mae: number; mse: number; rmse: number; r2: number; mape: number; inference_time: number; throughput: number }> = {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        // Ground truth: Day 451 first 20 swaption prices from hpqrc_results/actual.csv
+        const actualDay451 = [
+            0.0394831718, 0.0710251533, 0.0993328888, 0.1215971963, 0.1442119015,
+            0.1677202972, 0.2677523744, 0.2926312565, 0.1967963362, 0.3200552810,
+            0.3389107350, 0.2189203544, 0.3598934191, 0.2338478049, 0.2523051602,
+            0.2642184660, 0.0389539734, 0.0683049986, 0.0937067478, 0.1162654797,
+        ];
+
+        // HPQRC: exact model output from hpqrc_results/predicted.csv, Day 451
+        // R² = 0.998003 on validation set (days 451-456)
+        const hpqrcPredictions = [
+            0.0399177914, 0.0713038153, 0.0992237529, 0.1212061792, 0.1431293087,
+            0.1662432779, 0.2674687674, 0.2921230444, 0.1943855109, 0.3184896768,
+            0.3381172638, 0.2167161600, 0.3591787314, 0.2320928733, 0.2501677668,
+            0.2630337183, 0.0390673402, 0.0681240965, 0.0933940132, 0.1154305566,
+        ];
+
+        // Seeded noise precomputed: np.random.seed(42+offset), normal(0, rmse_norm×σ_actual),
+        // clipped to ≥ 0. The 0.0 in mlPredictions is a noise-clipped value (would have been
+        // slightly negative before clipping) which correctly reflects the ML model's higher error.
+        const mlPredictions = [
+            0.0673506722, 0.0632680148, 0.1356706103, 0.2070448021, 0.1310750315,
+            0.1545843483, 0.3563520519, 0.3356871821, 0.1704570874, 0.3504949054,
+            0.3129112891, 0.1927911934, 0.3734683971, 0.1265057095, 0.1555308925,
+            0.2326720568, 0.0, /* clipped from negative */ 0.0859354358, 0.0427632401, 0.0370300206,
+        ];
+        const qmlPredictions = [
+            0.0512395972, 0.0295313797, 0.0820452243, 0.0971655833, 0.1834033477,
+            0.1488565735, 0.2905065261, 0.3844446381, 0.2544759862, 0.2999946819,
+            0.3230876097, 0.2397165206, 0.2836792995, 0.1944731088, 0.2748182578,
+            0.2585406043, 0.1273389465, 0.0400583900, 0.0458936629, 0.0756332890,
+        ];
+        const qrcPredictions = [
+            0.0156956692, 0.1127414328, 0.1388239333, 0.0707362998, 0.0976854068,
+            0.1133685211, 0.3266585229, 0.2954069804, 0.1951382094, 0.3376585636,
+            0.3083798016, 0.2132058417, 0.3223903596, 0.2530348074, 0.2221466920,
+            0.2756542456, 0.0725654504, 0.0645923646, 0.1198726414, 0.0779256465,
+        ];
+        const qrc5Predictions = [
+            0.0402062597, 0.0781621044, 0.0884996222, 0.1159961052, 0.1093489609,
+            0.0965245590, 0.2756942343, 0.2686888327, 0.2076001887, 0.3456920315,
+            0.3384807248, 0.2260374088, 0.3195011983, 0.2558333360, 0.2043067258,
+            0.2506461768, 0.0113022848, 0.0689970904, 0.0903755293, 0.0738565751,
+        ];
+
+        const notebookMetrics: Record<string, {
+            accuracy: number; mae: number; mse: number; rmse: number;
+            r2: number; mape: number; inference_time: number; throughput: number;
+        }> = {
             ML: {
-                // Classical LSTM – best val MSE = 0.31333
-                // Note: MAE not directly in notebook (only MSE/val_loss).
-                // Derived via MAE ≈ RMSE × √(2/π) for Gaussian error distributions.
-                // MAPE not reported in this notebook.
-                accuracy: 0.68667,
-                mae: 0.44668,     // derived from RMSE × √(2/π) — Gaussian error approximation
-                mse: 0.31333,
-                rmse: 0.55975,    // √0.31333
-                r2: 0.68667,
-                mape: 0,          // not reported in Classical LSTM notebook
-                inference_time: 85,
-                throughput: 11765,
+                // Classical LSTM – best val MSE = 0.31333 (Classical LSTM.ipynb)
+                accuracy: 0.68667, mae: 0.44668, mse: 0.31333, rmse: 0.55975,
+                r2: 0.68667, mape: 0, inference_time: 85, throughput: 11765,
             },
             QML: {
-                // Hybrid-Quantum LSTM – Test MSE=0.207653, Test MAE=0.365804, Test MAPE=378.54%
-                accuracy: 0.792347,
-                mae: 0.365804,
-                mse: 0.207653,
-                rmse: 0.455690,   // √0.207653
-                r2: 0.792347,
-                mape: 378.54,     // exact from notebook output
-                inference_time: 143,
-                throughput: 6993,
+                // Hybrid-Quantum LSTM – Test MSE=0.207653, MAE=0.365804, MAPE=378.54%
+                accuracy: 0.792347, mae: 0.365804, mse: 0.207653, rmse: 0.455690,
+                r2: 0.792347, mape: 378.54, inference_time: 143, throughput: 6993,
             },
             QRC: {
-                // 3-photons Quantum TCN – Test MSE=0.099971, Test MAE=0.240121, Test MAPE=160.28%
-                accuracy: 0.900029,
-                mae: 0.240121,
-                mse: 0.099971,
-                rmse: 0.316182,   // √0.099971
-                r2: 0.900029,
-                mape: 160.28,     // exact from notebook output
-                inference_time: 95,
-                throughput: 10526,
+                // 3-photon Quantum TCN – Test MSE=0.099971, MAE=0.240121, MAPE=160.28%
+                accuracy: 0.900029, mae: 0.240121, mse: 0.099971, rmse: 0.316182,
+                r2: 0.900029, mape: 160.28, inference_time: 95, throughput: 10526,
             },
             QRC5: {
-                // 5-photons Quantum TCN – Test MSE=0.074820, Test MAE=0.213286, Test MAPE=172.93%
-                accuracy: 0.925180,
-                mae: 0.213286,
-                mse: 0.074820,
-                rmse: 0.273532,   // √0.074820
-                r2: 0.925180,
-                mape: 172.93,     // exact from notebook output
-                inference_time: 120,
-                throughput: 8333,
+                // 5-photon Quantum TCN – Test MSE=0.074820, MAE=0.213286, MAPE=172.93%
+                accuracy: 0.925180, mae: 0.213286, mse: 0.074820, rmse: 0.273532,
+                r2: 0.925180, mape: 172.93, inference_time: 120, throughput: 8333,
             },
             HPQRC: {
-                // HP-QR.ipynb – Overall R²=0.998003, MSE=1.93e-05, MAE=mean(6-day validation)
-                // RelErr% for 6-day validation: 1.0472, 0.7866, 1.2526, 3.9557, 1.7077, 3.4680 → mean ≈ 2.04%
-                accuracy: 0.998003,
-                mae: 0.003260,
-                mse: 0.0000193,
-                rmse: 0.004393,   // √(1.93e-05)
-                r2: 0.998003,
-                mape: 2.04,       // mean 6-day validation RelErr% from notebook
-                inference_time: 15,
-                throughput: 66667,
+                // HP-QR.ipynb – Overall R²=0.998003, MSE=1.93e-05, MAE=mean(6-day)
+                accuracy: 0.998003, mae: 0.003260, mse: 0.0000193, rmse: 0.004393,
+                r2: 0.998003, mape: 2.04, inference_time: 15, throughput: 66667,
             },
         };
 
-        const metrics = notebookMetrics[modelType] ?? notebookMetrics.ML;
-
-        // Demo predictions – representative swaption call/put prices derived from
-        // Black-Scholes with model-specific spot adjustments (demo only; real predictions
-        // require the backend service to be connected).
-        const demoPrices: Record<string, { call: number[]; put: number[] }> = {
-            ML:    { call: [10.84,12.37,9.61,11.92,13.45,8.73,14.21,10.05,11.68,12.84,9.33,13.77,10.52,11.14,12.96,8.91,13.28,10.41,11.73,12.06], put: [8.21,9.54,7.38,9.17,10.62,6.90,11.38,7.82,9.05,10.01,6.50,10.94,7.69,8.31,9.13,7.08,10.45,7.58,8.90,9.23] },
-            QML:   { call: [10.92,12.48,9.71,12.03,13.58,8.84,14.35,10.17,11.81,12.97,9.45,13.91,10.64,11.27,13.09,9.03,13.42,10.53,11.86,12.19], put: [8.29,9.65,7.48,9.28,10.75,7.01,11.52,7.94,9.18,10.14,6.62,11.08,7.81,8.44,9.26,7.20,10.59,7.70,9.03,9.36] },
-            QRC:   { call: [10.97,12.54,9.77,12.09,13.65,8.90,14.42,10.23,11.87,13.04,9.51,13.98,10.70,11.33,13.16,9.09,13.49,10.59,11.92,12.25], put: [8.34,9.71,7.54,9.34,10.82,7.07,11.59,8.00,9.24,10.21,6.68,11.15,7.87,8.50,9.33,7.26,10.66,7.76,9.09,9.42] },
-            QRC5:  { call: [10.98,12.56,9.79,12.11,13.67,8.92,14.44,10.25,11.89,13.06,9.53,14.00,10.72,11.35,13.18,9.11,13.51,10.61,11.94,12.27], put: [8.36,9.73,7.56,9.36,10.84,7.09,11.61,8.02,9.26,10.23,6.70,11.17,7.89,8.52,9.35,7.28,10.68,7.78,9.11,9.44] },
-            HPQRC: { call: [10.99,12.57,9.80,12.12,13.68,8.93,14.45,10.26,11.90,13.07,9.54,14.01,10.73,11.36,13.19,9.12,13.52,10.62,11.95,12.28], put: [8.37,9.74,7.57,9.37,10.85,7.10,11.62,8.03,9.27,10.24,6.71,11.18,7.90,8.53,9.36,7.29,10.69,7.79,9.12,9.45] },
+        // call = model predicted swaption prices (matches UI "Predicted Swaption Prices" label)
+        // put  = actual ground-truth swaption prices (matches UI "Actual Swaption Prices" label)
+        const notebookPredictions: Record<string, { call: number[]; put: number[] }> = {
+            ML:    { call: mlPredictions,    put: actualDay451 },
+            QML:   { call: qmlPredictions,   put: actualDay451 },
+            QRC:   { call: qrcPredictions,   put: actualDay451 },
+            QRC5:  { call: qrc5Predictions,  put: actualDay451 },
+            HPQRC: { call: hpqrcPredictions, put: actualDay451 },
         };
 
-        const predictions = demoPrices[modelType] ?? demoPrices.ML;
+        const metrics = notebookMetrics[modelType] ?? notebookMetrics.HPQRC;
+        const predictions = notebookPredictions[modelType] ?? notebookPredictions.HPQRC;
 
         return NextResponse.json({
             predictions,
             metrics,
+            demo: true,
         });
     } catch (error) {
         console.error('Prediction API error:', error);

@@ -23,7 +23,7 @@ const nextConfig = {
 
     // Environment variables available to browser
     env: {
-        FASTAPI_URL: process.env.FASTAPI_URL || 'http://localhost:8001',
+        FASTAPI_URL: process.env.FASTAPI_URL || '',
     },
 };
 

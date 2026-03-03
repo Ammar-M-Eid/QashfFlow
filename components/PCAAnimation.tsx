@@ -13,25 +13,38 @@ export default function PCAAnimation() {
         return () => clearInterval(timer);
     }, []);
 
-    // Generate random points for high-dimensional space
-    const highDimPoints = Array.from({ length: 30 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 300,
-        y: Math.random() * 300,
-        z: Math.random() * 100,
-    }));
+    // Fixed scatter points for illustrative PCA visualization
+    const highDimPoints = [
+        { id: 0, x: 42, y: 187, z: 63 }, { id: 1, x: 218, y: 54, z: 41 },
+        { id: 2, x: 131, y: 243, z: 78 }, { id: 3, x: 275, y: 113, z: 22 },
+        { id: 4, x: 67, y: 28, z: 91 }, { id: 5, x: 196, y: 167, z: 55 },
+        { id: 6, x: 88, y: 211, z: 34 }, { id: 7, x: 253, y: 76, z: 87 },
+        { id: 8, x: 154, y: 139, z: 48 }, { id: 9, x: 19, y: 95, z: 71 },
+        { id: 10, x: 301, y: 231, z: 29 }, { id: 11, x: 110, y: 52, z: 96 },
+        { id: 12, x: 237, y: 188, z: 13 }, { id: 13, x: 73, y: 272, z: 60 },
+        { id: 14, x: 181, y: 33, z: 82 }, { id: 15, x: 46, y: 148, z: 37 },
+        { id: 16, x: 289, y: 197, z: 74 }, { id: 17, x: 122, y: 85, z: 19 },
+        { id: 18, x: 205, y: 259, z: 51 }, { id: 19, x: 58, y: 311, z: 88 },
+        { id: 20, x: 163, y: 121, z: 44 }, { id: 21, x: 327, y: 67, z: 66 },
+        { id: 22, x: 94, y: 178, z: 31 }, { id: 23, x: 242, y: 134, z: 93 },
+        { id: 24, x: 15, y: 222, z: 57 }, { id: 25, x: 178, y: 295, z: 26 },
+        { id: 26, x: 115, y: 47, z: 84 }, { id: 27, x: 269, y: 160, z: 15 },
+        { id: 28, x: 51, y: 103, z: 72 }, { id: 29, x: 201, y: 217, z: 39 },
+    ];
 
-    // Generate clustered points for 2D space
-    const lowDimPoints = Array.from({ length: 30 }, (_, i) => {
-        const cluster = i % 3;
-        const baseX = 100 + cluster * 150;
-        const baseY = 150;
-        return {
-            id: i,
-            x: baseX + (Math.random() - 0.5) * 60,
-            y: baseY + (Math.random() - 0.5) * 60,
-        };
-    });
+    // Fixed clustered points for 2D PCA projection visualization
+    const lowDimPoints = [
+        { id: 0, x: 82, y: 133 }, { id: 1, x: 112, y: 161 }, { id: 2, x: 95, y: 147 },
+        { id: 3, x: 68, y: 172 }, { id: 4, x: 104, y: 118 }, { id: 5, x: 88, y: 155 },
+        { id: 6, x: 121, y: 140 }, { id: 7, x: 75, y: 126 }, { id: 8, x: 98, y: 168 },
+        { id: 9, x: 110, y: 132 }, { id: 10, x: 232, y: 141 }, { id: 11, x: 258, y: 167 },
+        { id: 12, x: 247, y: 123 }, { id: 13, x: 221, y: 155 }, { id: 14, x: 263, y: 148 },
+        { id: 15, x: 238, y: 176 }, { id: 16, x: 215, y: 132 }, { id: 17, x: 252, y: 161 },
+        { id: 18, x: 226, y: 144 }, { id: 19, x: 243, y: 130 }, { id: 20, x: 382, y: 138 },
+        { id: 21, x: 407, y: 162 }, { id: 22, x: 394, y: 121 }, { id: 23, x: 368, y: 153 },
+        { id: 24, x: 413, y: 145 }, { id: 25, x: 375, y: 173 }, { id: 26, x: 396, y: 129 },
+        { id: 27, x: 422, y: 158 }, { id: 28, x: 361, y: 141 }, { id: 29, x: 403, y: 135 },
+    ];
 
     return (
         <section className="container mx-auto px-4 py-12">

@@ -256,7 +256,7 @@ export default function HomePage() {
                     <div className="glass-card rounded-xl p-4 text-center">
                         <p className="text-gray-400">Current Model Performance</p>
                         <p className="text-2xl font-bold gradient-text">
-                            {selectedModel} Accuracy: {(currentAccuracy * 100).toFixed(2)}%
+                            {selectedModel} Accuracy: {(currentAccuracy * 100).toFixed(10)}%
                         </p>
                     </div>
                 </motion.section>

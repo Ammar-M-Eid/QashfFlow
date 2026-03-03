@@ -84,6 +84,7 @@ export function normalizePredictionResponse(raw: BackendPredictionResponse): Pre
     }
 
     const metrics = buildMetrics(raw);
+    const demo = (raw as any).demo === true;
 
     return {
         predictions: {
@@ -91,5 +92,6 @@ export function normalizePredictionResponse(raw: BackendPredictionResponse): Pre
             put,
         },
         metrics,
+        ...(demo ? { demo: true } : {}),
     };
 }
