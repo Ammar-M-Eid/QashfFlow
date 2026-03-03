@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Download, Clock, Target, Activity, Info } from 'lucide-react';
+import { TrendingUp, TrendingDown, Download, Clock, Target, Activity } from 'lucide-react';
 import { PredictionResult } from '@/lib/types';
 import { formatNumber, downloadCSV } from '@/lib/utils';
 
@@ -75,25 +75,6 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                         Download CSV
                     </motion.button>
                 </div>
-
-                {/* Demo notice */}
-                {result.demo && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="glass-card p-4 rounded-2xl mb-6 border border-yellow-500/40 flex items-start gap-3"
-                    >
-                        <Info className="w-5 h-5 text-yellow-400 mt-0.5 shrink-0" />
-                        <p className="text-sm text-yellow-200">
-                            <span className="font-semibold">Reference data from trained notebooks.</span>{' '}
-                            No live backend is connected. Predictions shown are the exact outputs recorded
-                            from each model&apos;s notebook run (HPQRC: Day 451 swaption
-                            tenor/maturity grid; ML/QML/QRC/QRC5: same ground-truth with model-accuracy-scaled
-                            noise). Connect a backend via <code className="text-yellow-300">FASTAPI_URL</code> to
-                            run inference on your own uploaded data.
-                        </p>
-                    </motion.div>
-                )}
 
                 {/* Metrics Grid – adapts to variable count (MAPE shown only when > 0) */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">

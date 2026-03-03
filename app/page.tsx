@@ -10,8 +10,7 @@ import MetricsCharts from '@/components/MetricsCharts';
 import PCAAnimation from '@/components/PCAAnimation';
 import ModelPipelineDiagram from '@/components/ModelPipelineDiagram';
 import BlochSphereMock from '@/components/BlochSphereMock';
-import BenchmarkComparison from '@/components/BenchmarkComparison';
-import { ModelType, PredictionResult, ModelCache, DataRow, BackendPredictionResponse, BenchmarksData } from '@/lib/types';
+import { ModelType, PredictionResult, ModelCache, DataRow, BackendPredictionResponse } from '@/lib/types';
 import { normalizePredictionResponse } from '@/lib/prediction-adapter';
 import { RefreshCw, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
 
@@ -22,7 +21,6 @@ export default function HomePage() {
     const [noiseLevel, setNoiseLevel] = useState<number>(0);
     const [modelCache, setModelCache] = useState<ModelCache>({});
     const [currentResult, setCurrentResult] = useState<PredictionResult | null>(null);
-    const [benchmarks, setBenchmarks] = useState<BenchmarksData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string>('');
     const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -41,22 +39,6 @@ export default function HomePage() {
             return () => clearTimeout(timer);
         }
     }, [toast]);
-    
-    // Fetch benchmarks on mount
-    useEffect(() => {
-        const fetchBenchmarks = async () => {
-            try {
-                const response = await fetch('/api/benchmarks');
-                if (response.ok) {
-                    const data = await response.json();
-                    setBenchmarks(data);
-                }
-            } catch (err) {
-                console.error('Failed to fetch benchmarks:', err);
-            }
-        };
-        fetchBenchmarks();
-    }, []);
 
     // Handle file upload
     const handleFileUpload = async (file: File, preview: DataRow[]) => {
@@ -235,15 +217,6 @@ export default function HomePage() {
                         )}
                     </div>
                 </motion.section>
-            )}
-
-            {/* Benchmark Comparison */}
-            {benchmarks && currentResult && (
-                <BenchmarkComparison
-                    liveMetrics={currentResult.metrics}
-                    benchmarks={benchmarks}
-                    modelType={selectedModel}
-                />
             )}
 
             {/* Selected Model Accuracy Display */}
