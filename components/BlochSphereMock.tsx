@@ -14,12 +14,12 @@ export default function BlochSphereMock({ modelCache }: BlochSphereMockProps) {
     );
 
     const runtimeData = [
-        { model: 'ML', time: modelCache.ML?.metrics.inference_time || 120, color: 'from-blue-500 to-blue-600' },
-        { model: 'QML', time: modelCache.QML?.metrics.inference_time || 180, color: 'from-purple-500 to-purple-600' },
-        { model: 'QRC', time: modelCache.QRC?.metrics.inference_time || 95, color: 'from-pink-500 to-pink-600' },
-    ];
+        { model: 'ML', time: modelCache.ML?.metrics.inference_time, color: 'from-blue-500 to-blue-600' },
+        { model: 'QML', time: modelCache.QML?.metrics.inference_time, color: 'from-purple-500 to-purple-600' },
+        { model: 'QRC', time: modelCache.QRC?.metrics.inference_time, color: 'from-pink-500 to-pink-600' },
+    ].filter((d): d is { model: string; time: number; color: string } => d.time !== undefined);
 
-    const maxTime = Math.max(...runtimeData.map((d) => d.time));
+    const maxTime = runtimeData.length > 0 ? Math.max(...runtimeData.map((d) => d.time)) : 1;
 
     return (
         <section className="container mx-auto px-4 py-12">
@@ -149,7 +149,7 @@ export default function BlochSphereMock({ modelCache }: BlochSphereMockProps) {
                                     >
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="font-semibold">{item.model}</span>
-                                            <span className="text-sm text-gray-400">{item.time.toFixed(1)} ms</span>
+                                            <span className="text-sm text-gray-400">{item.time.toFixed(10)} ms</span>
                                         </div>
                                         <div className="h-4 bg-white/10 rounded-full overflow-hidden">
                                             <motion.div

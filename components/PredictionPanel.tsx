@@ -93,7 +93,7 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                                     <span className="text-sm text-gray-400">{metric.label}</span>
                                 </div>
                                 <div className="text-2xl font-bold">
-                                    {formatNumber(metric.value, 2)}
+                                    {formatNumber(metric.value, 10)}
                                     <span className="text-sm ml-1 text-gray-400">{metric.suffix}</span>
                                 </div>
                                 {/* Confidence bar for accuracy */}
@@ -135,7 +135,7 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                                     className="flex justify-between items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                                 >
                                     <span className="text-gray-400">Sample {idx + 1}</span>
-                                    <span className="font-semibold text-green-400">${formatNumber(price, 4)}</span>
+                                    <span className="font-semibold text-green-400">${formatNumber(price, 10)}</span>
                                 </motion.div>
                             ))}
                         </div>
@@ -167,7 +167,7 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                                     className="flex justify-between items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                                 >
                                     <span className="text-gray-400">Sample {idx + 1}</span>
-                                    <span className="font-semibold text-red-400">${formatNumber(price, 4)}</span>
+                                    <span className="font-semibold text-red-400">${formatNumber(price, 10)}</span>
                                 </motion.div>
                             ))}
                         </div>

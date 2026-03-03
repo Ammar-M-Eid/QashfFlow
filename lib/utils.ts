@@ -28,12 +28,4 @@ export function formatNumber(num: number | undefined | null, decimals: number = 
     return num.toFixed(decimals);
 }
 
-export function generateRandomMetrics() {
-    return {
-        accuracy: Math.random() * 0.15 + 0.85, // 85-100%
-        mae: Math.random() * 0.5 + 0.1, // 0.1-0.6
-        rmse: Math.random() * 0.7 + 0.2, // 0.2-0.9
-        r2: Math.random() * 0.15 + 0.80, // 80-95%
-        inference_time: Math.random() * 200 + 50, // 50-250ms
-    };
-}
+
