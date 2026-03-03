@@ -8,7 +8,7 @@ import ModelSelector from '@/components/ModelSelector';
 import PredictionPanel from '@/components/PredictionPanel';
 import MetricsCharts from '@/components/MetricsCharts';
 import PCAAnimation from '@/components/PCAAnimation';
-import QRCPipeline from '@/components/QRCPipeline';
+import ModelPipelineDiagram from '@/components/ModelPipelineDiagram';
 import BlochSphereMock from '@/components/BlochSphereMock';
 import BenchmarkComparison from '@/components/BenchmarkComparison';
 import { ModelType, PredictionResult, ModelCache, DataRow, BackendPredictionResponse, BenchmarksData } from '@/lib/types';
@@ -302,7 +302,7 @@ export default function HomePage() {
                 <>
                     <MetricsCharts modelCache={modelCache} />
                     <PCAAnimation />
-                    <QRCPipeline />
+                    <ModelPipelineDiagram modelType={selectedModel} />
                     <BlochSphereMock modelCache={modelCache} />
 
                     {/* Reset Button */}
