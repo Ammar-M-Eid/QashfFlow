@@ -30,12 +30,16 @@ function buildMetrics(raw: BackendPredictionResponse): PredictionMetrics {
         (metricsSource as any).throughput ?? (raw as any).throughput ?? 0.0
     );
 
+    const mapeRaw = (metricsSource as any).mape ?? (raw as any).mape;
+    const mape = mapeRaw != null ? Number(mapeRaw) : undefined;
+
     return {
         accuracy: Number.isFinite(accuracy) ? accuracy : 0,
         mae: Number.isFinite(mae) ? mae : 0,
         rmse: Number.isFinite(rmse) ? rmse : 0,
         mse: Number.isFinite(mse) ? mse : 0,
         r2: Number.isFinite(r2) ? r2 : 0,
+        mape: mape != null && Number.isFinite(mape) ? mape : undefined,
         inference_time: Number.isFinite(inference_time) ? inference_time : 0,
         throughput: Number.isFinite(throughput) ? throughput : 0,
     };

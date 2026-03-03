@@ -1,8 +1,5 @@
 {
     "version": 2,
-    "env": {
-        "FASTAPI_URL": "https://your-backend-url.vercel.app"
-    },
     "regions": [
         "iad1"
     ]
