@@ -1,0 +1,11 @@
+# Git LFS Configuration for QashFlow
+# Use this for large model checkpoint files
+
+# Track PyTorch model files
+*.pth filter=lfs diff=lfs merge=lfs -text
+
+# Track pickle files (scalers)
+*.pkl filter=lfs diff=lfs merge=lfs -text
+
+# Track large notebook outputs
+*.ipynb filter=lfs diff=lfs merge=lfs -text

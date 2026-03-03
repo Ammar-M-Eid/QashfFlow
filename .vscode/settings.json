@@ -1,0 +1,53 @@
+{
+  // Suppress CSS linting errors for Tailwind CSS directives
+  "css.lint.unknownAtRules": "ignore",
+  
+  // Python settings
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+  
+  // Suppress Jupyter notebook warnings
+  "jupyter.widgetScriptSources": ["jsdelivr.com", "unpkg.com"],
+  "notebook.output.textLineLimit": 100,
+  
+  // PowerShell settings
+  "powershell.scriptAnalysis.enable": true,
+  
+  // File associations
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  
+  // Exclude patterns to reduce noise
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/node_modules": true,
+    "**/.venv": true
+  },
+  
+  // Search exclude patterns
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  },
+  
+  // Editor settings
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  
+  // Tailwind CSS IntelliSense
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  
+  // TypeScript settings
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

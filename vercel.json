@@ -1,0 +1,15 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/next"
+        }
+    ],
+    "env": {
+        "FASTAPI_URL": "https://your-backend-url.vercel.app"
+    },
+    "regions": [
+        "iad1"
+    ]
+}
