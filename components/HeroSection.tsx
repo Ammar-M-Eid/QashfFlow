@@ -101,7 +101,7 @@ export default function HeroSection({ onUploadClick }: HeroSectionProps) {
                         transition={{ delay: 0.6, duration: 0.8 }}
                         className="flex flex-wrap gap-4 justify-center mt-12"
                     >
-                        {['Classical ML', 'Quantum ML', 'QRC'].map((tech, index) => (
+                        {['Classical ML', 'Quantum ML', 'QRC', 'HPQRC'].map((tech, index) => (
                             <motion.div
                                 key={tech}
                                 initial={{ opacity: 0, x: -20 }}

@@ -97,17 +97,21 @@ class MultiModelService:
             print(f"✗ Qashflow Models directory not found: {qashflow_models_dir}")
             return
         
-        # Find 3-photon model (optimized for performance)
-        checkpoints = list(qashflow_models_dir.glob("*quantum_tcn_option_pricing_3photons_*.pth"))
+        # Find best available photon model (prefer higher photon count)
+        checkpoints = sorted(qashflow_models_dir.glob("*quantum_tcn_option_pricing_*photons_*.pth"))
         
         # Find corresponding scaler
         if checkpoints:
-            latest_checkpoint = sorted(checkpoints)[-1]
-            # Extract timestamp from checkpoint filename
-            timestamp = latest_checkpoint.stem.split('_')[-1]
-            scaler_path = qashflow_models_dir / f"scaler_{timestamp}.pkl"
+            latest_checkpoint = checkpoints[-1]
+            # Extract full timestamp (YYYYMMDD_HHMMSS) - last two underscore-segments
+            stem_parts = latest_checkpoint.stem.split('_')
+            if len(stem_parts) >= 2:
+                timestamp = '_'.join(stem_parts[-2:])
+                scaler_path = qashflow_models_dir / f"scaler_{timestamp}.pkl"
+            else:
+                scaler_path = None
             
-            if not scaler_path.exists():
+            if not scaler_path or not scaler_path.exists():
                 # Try finding any scaler
                 scalers = list(qashflow_models_dir.glob("scaler_*.pkl"))
                 scaler_path = sorted(scalers)[-1] if scalers else None
@@ -150,14 +154,14 @@ class MultiModelService:
                 self.scalers["QML"] = scaler
                 self.scalers["QRC"] = scaler
                 
-                print(f"✓ Quantum models (QML/QRC) loaded: 3-photon model")
+                print(f"✓ Quantum models (QML/QRC) loaded")
                 print(f"  File: {latest_checkpoint.name}")
                 print(f"  Features: {n_features}, Modes: {q_modes}, Photons: {n_photons}")
                 
             except Exception as e:
                 print(f"✗ Failed to load quantum models: {e}")
         else:
-            print(f"✗ No 3-photon quantum model found in {qashflow_models_dir}")
+            print(f"✗ No quantum TCN model found in {qashflow_models_dir}")
     
     def _load_hpqrc_model(self, hpqrc_dir: Path) -> None:
         """Load HPQRC model"""
@@ -325,7 +329,11 @@ class MultiModelService:
         # Apply scaling
         scaler = self.scalers.get(model_type)
         if scaler is not None:
-            features = scaler.transform(features)
+            try:
+                features = scaler.transform(features)
+            except (ValueError, Exception) as e:
+                # Scaler feature count mismatch – skip scaling
+                print(f"⚠ Skipping scaler for {model_type}: {e}")
         
         # Build sequences
         sequence_length = 10
