@@ -6,7 +6,7 @@ const nextConfig = {
     compress: true,
     poweredByHeader: false,
 
-    // Image optimization (updated for Next.js 16)
+    // Image optimization
     images: {
         remotePatterns: [
             {
@@ -20,9 +20,6 @@ const nextConfig = {
 
     // Production optimizations
     productionBrowserSourceMaps: false,
-
-    // Use Turbopack (Next.js 16+ default)
-    turbopack: {},
 
     // Environment variables available to browser
     env: {
