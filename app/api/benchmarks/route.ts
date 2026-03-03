@@ -23,8 +23,9 @@ export async function GET() {
 
         // Exact benchmark metrics from trained notebooks:
         //   HPQRC  → HP-QR.ipynb:                Overall R²=0.998003, MSE=1.93e-05, MAE=0.003260
-        //   QRC    → 3-photons Quantum TCN:       Test MSE=0.099971, R²=0.900029
-        //   QML    → Hybrid-Quantum LSTM:         Test MSE=0.207653, R²=0.792347
+        //   QRC5   → 5-photons Quantum TCN:       Test MSE=0.074820, R²=0.925180, MAE=0.213286
+        //   QRC    → 3-photons Quantum TCN:       Test MSE=0.099971, R²=0.900029, MAE=0.240121
+        //   QML    → Hybrid-Quantum LSTM:         Test MSE=0.207653, R²=0.792347, MAE=0.365804
         //   ML     → Classical LSTM:              Best val MSE=0.31333, R²=0.68667
         // Latency values reflect model-architecture inference complexity.
         return NextResponse.json({
@@ -35,6 +36,12 @@ export async function GET() {
                 noise_10_accuracy: 0.971915,
                 noise_15_accuracy: 0.952000,
                 nmse_mackey_glass: 0.0000193,
+            },
+            qrc5: {
+                accuracy: 0.925180,
+                latency_ms: 120.0,
+                throughput: 8333.0,
+                nmse_mackey_glass: 0.074820,
             },
             qrc: {
                 accuracy: 0.900029,

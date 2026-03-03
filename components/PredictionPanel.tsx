@@ -45,11 +45,14 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
     };
 
     const metrics = [
-        { label: 'Accuracy', value: result.metrics.accuracy * 100, suffix: '%', icon: Target, color: 'text-green-400' },
+        { label: 'Accuracy (R²)', value: result.metrics.accuracy * 100, suffix: '%', icon: Target, color: 'text-green-400' },
         { label: 'MAE', value: result.metrics.mae, suffix: '', icon: Activity, color: 'text-blue-400' },
         { label: 'MSE', value: result.metrics.mse, suffix: '', icon: Activity, color: 'text-blue-300' },
         { label: 'RMSE', value: result.metrics.rmse, suffix: '', icon: TrendingDown, color: 'text-yellow-400' },
-        { label: 'R² Score', value: result.metrics.r2, suffix: '', icon: TrendingUp, color: 'text-purple-400' },
+        { label: 'R²', value: result.metrics.r2, suffix: '', icon: TrendingUp, color: 'text-purple-400' },
+        ...(result.metrics.mape != null && result.metrics.mape > 0
+            ? [{ label: 'MAPE', value: result.metrics.mape, suffix: '%', icon: Activity, color: 'text-orange-400' }]
+            : []),
         { label: 'Inference Time', value: result.metrics.inference_time, suffix: 'ms', icon: Clock, color: 'text-pink-400' },
     ];
 
@@ -73,8 +76,8 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                     </motion.button>
                 </div>
 
-                {/* Metrics Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                {/* Metrics Grid – adapts to variable count (MAPE shown only when > 0) */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
                     {metrics.map((metric, idx) => {
                         const Icon = metric.icon;
                         return (

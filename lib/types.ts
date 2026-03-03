@@ -1,4 +1,4 @@
-export type ModelType = 'ML' | 'QML' | 'QRC' | 'HPQRC';
+export type ModelType = 'ML' | 'QML' | 'QRC' | 'QRC5' | 'HPQRC';
 
 export interface PredictionMetrics {
     accuracy: number;
@@ -6,6 +6,7 @@ export interface PredictionMetrics {
     rmse: number;
     mse: number;
     r2: number;
+    mape?: number;       // Mean Absolute Percentage Error (from notebooks)
     inference_time: number;
     throughput: number;  // samples per second
 }
@@ -43,6 +44,7 @@ export interface ModelCache {
     ML?: PredictionResult;
     QML?: PredictionResult;
     QRC?: PredictionResult;
+    QRC5?: PredictionResult;
     HPQRC?: PredictionResult;
 }
 
@@ -57,6 +59,7 @@ export interface BenchmarkMetrics {
 
 export interface BenchmarksData {
     hpqrc: BenchmarkMetrics;
+    qrc5: BenchmarkMetrics;
     qrc: BenchmarkMetrics;
     classical: BenchmarkMetrics;
 }

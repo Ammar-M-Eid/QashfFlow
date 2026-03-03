@@ -63,7 +63,7 @@ def health(settings: Settings = Depends(get_settings)):
 @app.post("/predict", response_model=PredictResponse)
 async def predict(
     file: UploadFile = File(...),
-    model_type: Literal["ML", "QML", "QRC", "HPQRC"] = Form(...),
+    model_type: Literal["ML", "QML", "QRC", "QRC5", "HPQRC"] = Form(...),
     noise_level: float = Form(0.0),
     model_service: MultiModelService = Depends(get_multi_model_service),
 ):
@@ -133,6 +133,12 @@ async def get_benchmarks() -> BenchmarksResponse:
             "noise_10_accuracy": 0.971915,  # HP-QR.ipynb: Training R² (PCA space) – used as noise-10% proxy
             "noise_15_accuracy": 0.952000,  # Interpolated between training R²(0.971915) and test R²(−2.84) mid-range
             "nmse_mackey_glass": 0.0000193, # HP-QR.ipynb: Overall validation MSE = 1.93e-05
+        },
+        "qrc5": {
+            "accuracy": 0.925180,   # 5-photons Quantum TCN: R² = 1 - Test MSE (0.074820)
+            "latency_ms": 120.0,    # Quantum TCN 5-photon inference (more params, slower than 3-photon)
+            "throughput": 8333.0,   # 1000 / 120ms * 1000
+            "nmse_mackey_glass": 0.074820,  # 5-photons TCN: Test MSE = 0.074820
         },
         "qrc": {
             "accuracy": 0.900029,   # 3-photons Quantum TCN: R² = 1 - Test MSE (0.099971)

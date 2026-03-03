@@ -3,7 +3,7 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
-ModelType = Literal["ML", "QML", "QRC", "HPQRC"]
+ModelType = Literal["ML", "QML", "QRC", "QRC5", "HPQRC"]
 
 
 class Metrics(BaseModel):
@@ -12,6 +12,7 @@ class Metrics(BaseModel):
     rmse: float = Field(ge=0)
     mse: float = Field(ge=0)
     r2: float = Field(ge=0, le=1)
+    mape: Optional[float] = Field(default=None, ge=0, description="Mean Absolute Percentage Error (%)")
     inference_time: float = Field(ge=0)
     throughput: float = Field(ge=0, description="Samples per second")
 
@@ -39,6 +40,7 @@ class BenchmarkMetrics(BaseModel):
 class BenchmarksResponse(BaseModel):
     """Static validated research benchmarks"""
     hpqrc: BenchmarkMetrics
+    qrc5: BenchmarkMetrics
     qrc: BenchmarkMetrics
     classical: BenchmarkMetrics
 

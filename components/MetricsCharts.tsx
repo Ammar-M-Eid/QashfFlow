@@ -45,6 +45,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
             ML: modelCache.ML ? modelCache.ML.metrics.accuracy * 100 : 0,
             QML: modelCache.QML ? modelCache.QML.metrics.accuracy * 100 : 0,
             QRC: modelCache.QRC ? modelCache.QRC.metrics.accuracy * 100 : 0,
+            QRC5: modelCache.QRC5 ? modelCache.QRC5.metrics.accuracy * 100 : 0,
             HPQRC: modelCache.HPQRC ? modelCache.HPQRC.metrics.accuracy * 100 : 0,
         },
         {
@@ -52,6 +53,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
             ML: modelCache.ML ? modelCache.ML.metrics.mse : 0,
             QML: modelCache.QML ? modelCache.QML.metrics.mse : 0,
             QRC: modelCache.QRC ? modelCache.QRC.metrics.mse : 0,
+            QRC5: modelCache.QRC5 ? modelCache.QRC5.metrics.mse : 0,
             HPQRC: modelCache.HPQRC ? modelCache.HPQRC.metrics.mse : 0,
         },
         {
@@ -59,6 +61,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
             ML: modelCache.ML ? modelCache.ML.metrics.rmse : 0,
             QML: modelCache.QML ? modelCache.QML.metrics.rmse : 0,
             QRC: modelCache.QRC ? modelCache.QRC.metrics.rmse : 0,
+            QRC5: modelCache.QRC5 ? modelCache.QRC5.metrics.rmse : 0,
             HPQRC: modelCache.HPQRC ? modelCache.HPQRC.metrics.rmse : 0,
         },
         {
@@ -66,6 +69,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
             ML: modelCache.ML ? modelCache.ML.metrics.r2 * 100 : 0,
             QML: modelCache.QML ? modelCache.QML.metrics.r2 * 100 : 0,
             QRC: modelCache.QRC ? modelCache.QRC.metrics.r2 * 100 : 0,
+            QRC5: modelCache.QRC5 ? modelCache.QRC5.metrics.r2 * 100 : 0,
             HPQRC: modelCache.HPQRC ? modelCache.HPQRC.metrics.r2 * 100 : 0,
         },
     ];
@@ -97,7 +101,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     {/* Individual Model Charts */}
-                    {(['ML', 'QML', 'QRC', 'HPQRC'] as const).map((modelKey, idx) => {
+                    {(['ML', 'QML', 'QRC', 'QRC5', 'HPQRC'] as const).map((modelKey, idx) => {
                         if (!modelCache[modelKey]) return null;
 
                         const data = prepareModelData(modelKey);
@@ -105,6 +109,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                             ML: '#3b82f6',
                             QML: '#8b5cf6',
                             QRC: '#ec4899',
+                            QRC5: '#10b981',
                             HPQRC: '#f59e0b',
                         };
 
@@ -119,7 +124,8 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                                 <h3 className="text-xl font-semibold mb-4">
                                     {modelKey === 'ML' && 'Classical ML Metrics'}
                                     {modelKey === 'QML' && 'Quantum ML Metrics'}
-                                    {modelKey === 'QRC' && 'QRC Metrics'}
+                                    {modelKey === 'QRC' && 'QRC (3-photon) Metrics'}
+                                    {modelKey === 'QRC5' && 'QRC (5-photon) Metrics'}
                                     {modelKey === 'HPQRC' && 'HPQRC Metrics'}
                                 </h3>
                                 <ResponsiveContainer width="100%" height={250}>
@@ -186,6 +192,16 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                                         dot={{ r: 5 }}
                                         animationDuration={1000}
                                     />
+                                )}
+                                {modelCache.QRC5 && (
+                                    <Line
+                                        type="monotone"
+                                        dataKey="QRC5"
+                                        stroke="#10b981"
+                                        strokeWidth={2}
+                                        dot={{ r: 5 }}
+                                        animationDuration={1000}
+                                    />
                                 )}                                {modelCache.HPQRC && (
                                     <Line
                                         type="monotone"
@@ -210,7 +226,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                     >
                         <h3 className="text-xl font-semibold mb-6">Inference Time Comparison</h3>
                         <div className="space-y-4">
-                            {(['ML', 'QML', 'QRC', 'HPQRC'] as const).map((modelKey) => {
+                            {(['ML', 'QML', 'QRC', 'QRC5', 'HPQRC'] as const).map((modelKey) => {
                                 if (!modelCache[modelKey]) return null;
 
                                 const time = modelCache[modelKey]!.metrics.inference_time;
@@ -218,6 +234,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                                     modelCache.ML?.metrics.inference_time || 0,
                                     modelCache.QML?.metrics.inference_time || 0,
                                     modelCache.QRC?.metrics.inference_time || 0,
+                                    modelCache.QRC5?.metrics.inference_time || 0,
                                     modelCache.HPQRC?.metrics.inference_time || 0
                                 );
                                 const percentage = (time / maxTime) * 100;
@@ -226,6 +243,7 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                                     ML: 'from-blue-500 to-blue-600',
                                     QML: 'from-purple-500 to-purple-600',
                                     QRC: 'from-pink-500 to-pink-600',
+                                    QRC5: 'from-emerald-500 to-emerald-600',
                                     HPQRC: 'from-orange-500 to-orange-600',
                                 };
 
@@ -235,7 +253,8 @@ export default function MetricsCharts({ modelCache }: MetricsChartsProps) {
                                             <span className="font-semibold">
                                                 {modelKey === 'ML' && 'Classical ML'}
                                                 {modelKey === 'QML' && 'Quantum ML'}
-                                                {modelKey === 'QRC' && 'QRC'}
+                                                {modelKey === 'QRC' && 'QRC (3-photon)'}
+                                                {modelKey === 'QRC5' && 'QRC (5-photon)'}
                                                 {modelKey === 'HPQRC' && 'HPQRC'}
                                             </span>
                                             <span className="text-gray-400">{time.toFixed(2)} ms</span>

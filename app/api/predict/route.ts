@@ -71,56 +71,74 @@ export async function POST(request: NextRequest) {
         }
 
         // Demo response using exact metrics from trained notebooks (1 s simulated latency):
-        // ML  → Classical LSTM notebook:          best val_loss(MSE)=0.31333
-        // QML → Hybrid-Quantum LSTM notebook:     Test MSE=0.207653, Test MAE=0.365804
-        // QRC → 3-photons Quantum TCN notebook:   Test MSE=0.099971, Test MAE=0.240121
-        // HPQRC → HP-QR.ipynb:                    Overall R²=0.998003, MSE=1.93e-05, MAE=0.003260
+        // ML    → Classical LSTM notebook:           best val_loss(MSE)=0.31333
+        // QML   → Hybrid-Quantum LSTM notebook:      Test MSE=0.207653, Test MAE=0.365804, MAPE=378.54%
+        // QRC   → 3-photons Quantum TCN notebook:    Test MSE=0.099971, Test MAE=0.240121, MAPE=160.28%
+        // QRC5  → 5-photons Quantum TCN notebook:    Test MSE=0.074820, Test MAE=0.213286, MAPE=172.93%
+        // HPQRC → HP-QR.ipynb:                       Overall R²=0.998003, MSE=1.93e-05, MAE=0.003260, RelErr≈2.04%
         //
-        // R² for ML/QML/QRC computed as 1 − MSE (valid for StandardScaler-normalised data).
+        // R² for ML/QML/QRC/QRC5 computed as 1 − MSE (valid for StandardScaler-normalised data).
         // Accuracy is set equal to R² (best available single-value quality metric from notebooks).
         // Inference times reflect model-architecture complexity; throughput = 1000 / latency_ms.
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 s demo latency
 
-        const notebookMetrics: Record<string, { accuracy: number; mae: number; mse: number; rmse: number; r2: number; inference_time: number; throughput: number }> = {
+        const notebookMetrics: Record<string, { accuracy: number; mae: number; mse: number; rmse: number; r2: number; mape: number; inference_time: number; throughput: number }> = {
             ML: {
                 // Classical LSTM – best val MSE = 0.31333
-                // Note: MAE is not directly reported in the notebook (only MSE/val_loss).
-                // Derived via MAE ≈ RMSE × √(2/π) which holds for Gaussian error distributions.
+                // Note: MAE not directly in notebook (only MSE/val_loss).
+                // Derived via MAE ≈ RMSE × √(2/π) for Gaussian error distributions.
+                // MAPE not reported in this notebook.
                 accuracy: 0.68667,
                 mae: 0.44668,     // derived from RMSE × √(2/π) — Gaussian error approximation
                 mse: 0.31333,
                 rmse: 0.55975,    // √0.31333
                 r2: 0.68667,
+                mape: 0,          // not reported in Classical LSTM notebook
                 inference_time: 85,
                 throughput: 11765,
             },
             QML: {
-                // Hybrid-Quantum LSTM – Test MSE=0.207653, Test MAE=0.365804
+                // Hybrid-Quantum LSTM – Test MSE=0.207653, Test MAE=0.365804, Test MAPE=378.54%
                 accuracy: 0.792347,
                 mae: 0.365804,
                 mse: 0.207653,
                 rmse: 0.455690,   // √0.207653
                 r2: 0.792347,
+                mape: 378.54,     // exact from notebook output
                 inference_time: 143,
                 throughput: 6993,
             },
             QRC: {
-                // 3-photons Quantum TCN – Test MSE=0.099971, Test MAE=0.240121
+                // 3-photons Quantum TCN – Test MSE=0.099971, Test MAE=0.240121, Test MAPE=160.28%
                 accuracy: 0.900029,
                 mae: 0.240121,
                 mse: 0.099971,
                 rmse: 0.316182,   // √0.099971
                 r2: 0.900029,
+                mape: 160.28,     // exact from notebook output
                 inference_time: 95,
                 throughput: 10526,
             },
+            QRC5: {
+                // 5-photons Quantum TCN – Test MSE=0.074820, Test MAE=0.213286, Test MAPE=172.93%
+                accuracy: 0.925180,
+                mae: 0.213286,
+                mse: 0.074820,
+                rmse: 0.273532,   // √0.074820
+                r2: 0.925180,
+                mape: 172.93,     // exact from notebook output
+                inference_time: 120,
+                throughput: 8333,
+            },
             HPQRC: {
                 // HP-QR.ipynb – Overall R²=0.998003, MSE=1.93e-05, MAE=mean(6-day validation)
+                // RelErr% for 6-day validation: 1.0472, 0.7866, 1.2526, 3.9557, 1.7077, 3.4680 → mean ≈ 2.04%
                 accuracy: 0.998003,
                 mae: 0.003260,
                 mse: 0.0000193,
                 rmse: 0.004393,   // √(1.93e-05)
                 r2: 0.998003,
+                mape: 2.04,       // mean 6-day validation RelErr% from notebook
                 inference_time: 15,
                 throughput: 66667,
             },
@@ -135,6 +153,7 @@ export async function POST(request: NextRequest) {
             ML:    { call: [10.84,12.37,9.61,11.92,13.45,8.73,14.21,10.05,11.68,12.84,9.33,13.77,10.52,11.14,12.96,8.91,13.28,10.41,11.73,12.06], put: [8.21,9.54,7.38,9.17,10.62,6.90,11.38,7.82,9.05,10.01,6.50,10.94,7.69,8.31,9.13,7.08,10.45,7.58,8.90,9.23] },
             QML:   { call: [10.92,12.48,9.71,12.03,13.58,8.84,14.35,10.17,11.81,12.97,9.45,13.91,10.64,11.27,13.09,9.03,13.42,10.53,11.86,12.19], put: [8.29,9.65,7.48,9.28,10.75,7.01,11.52,7.94,9.18,10.14,6.62,11.08,7.81,8.44,9.26,7.20,10.59,7.70,9.03,9.36] },
             QRC:   { call: [10.97,12.54,9.77,12.09,13.65,8.90,14.42,10.23,11.87,13.04,9.51,13.98,10.70,11.33,13.16,9.09,13.49,10.59,11.92,12.25], put: [8.34,9.71,7.54,9.34,10.82,7.07,11.59,8.00,9.24,10.21,6.68,11.15,7.87,8.50,9.33,7.26,10.66,7.76,9.09,9.42] },
+            QRC5:  { call: [10.98,12.56,9.79,12.11,13.67,8.92,14.44,10.25,11.89,13.06,9.53,14.00,10.72,11.35,13.18,9.11,13.51,10.61,11.94,12.27], put: [8.36,9.73,7.56,9.36,10.84,7.09,11.61,8.02,9.26,10.23,6.70,11.17,7.89,8.52,9.35,7.28,10.68,7.78,9.11,9.44] },
             HPQRC: { call: [10.99,12.57,9.80,12.12,13.68,8.93,14.45,10.26,11.90,13.07,9.54,14.01,10.73,11.36,13.19,9.12,13.52,10.62,11.95,12.28], put: [8.37,9.74,7.57,9.37,10.85,7.10,11.62,8.03,9.27,10.24,6.71,11.18,7.90,8.53,9.36,7.29,10.69,7.79,9.12,9.45] },
         };
 

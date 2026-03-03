@@ -19,6 +19,8 @@ export default function BenchmarkComparison({
         switch (modelType) {
             case 'HPQRC':
                 return benchmarks.hpqrc;
+            case 'QRC5':
+                return benchmarks.qrc5;
             case 'QRC':
             case 'QML':
                 return benchmarks.qrc;
