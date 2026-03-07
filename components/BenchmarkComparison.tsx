@@ -242,7 +242,7 @@ export default function BenchmarkComparison({
                 {/* Research footnote */}
                 <div className="mt-6 p-4 bg-blue-500/10 rounded-lg border border-blue-500/30">
                     <p className="text-sm text-blue-300">
-                        <strong>Research Benchmark:</strong> Validated metrics from HPQRC paper. 
+                        <strong>Research Benchmark:</strong> Validated metrics from QashfFlow documentation. 
                         Live results may vary based on dataset characteristics, preprocessing, and hardware.
                     </p>
                 </div>
