@@ -3,13 +3,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeroSection from '@/components/HeroSection';
+import ResearchPaperSection from '@/components/ResearchPaperSection';
+import HPQRCArchitectureSection from '@/components/HPQRCArchitectureSection';
+import NotebookExplainerSection from '@/components/NotebookExplainerSection';
 import FileUploader from '@/components/FileUploader';
 import ModelSelector from '@/components/ModelSelector';
 import PredictionPanel from '@/components/PredictionPanel';
 import MetricsCharts from '@/components/MetricsCharts';
-import PCAAnimation from '@/components/PCAAnimation';
 import ModelPipelineDiagram from '@/components/ModelPipelineDiagram';
-import BlochSphereMock from '@/components/BlochSphereMock';
 import { ModelType, PredictionResult, ModelCache, DataRow, BackendPredictionResponse } from '@/lib/types';
 import { normalizePredictionResponse } from '@/lib/prediction-adapter';
 import { RefreshCw, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
@@ -150,10 +151,21 @@ export default function HomePage() {
                 )}
             </AnimatePresence>
 
+            {/* ── PRE-UPLOAD: Educational Sections ─────────────────────────── */}
+
             {/* Hero Section */}
             <HeroSection onUploadClick={handleUploadClick} />
 
-            {/* Upload Section */}
+            {/* Research Paper Overview */}
+            <ResearchPaperSection />
+
+            {/* HPQRC Architecture Animation */}
+            <HPQRCArchitectureSection />
+
+            {/* Notebooks & Models Explainer */}
+            <NotebookExplainerSection />
+
+            {/* ── UPLOAD SECTION ───────────────────────────────────────────── */}
             <div ref={uploadSectionRef}>
                 <FileUploader
                     onFileUpload={handleFileUpload}
@@ -162,12 +174,16 @@ export default function HomePage() {
                 />
             </div>
 
-            {/* Model Selection */}
-            <ModelSelector
-                selectedModel={selectedModel}
-                onModelChange={handleModelChange}
-                disabled={isLoading}
-            />
+            {/* ── POST-UPLOAD: Prediction Sections ─────────────────────────── */}
+
+            {/* Model Selection (shown after upload) */}
+            {uploadedFile && (
+                <ModelSelector
+                    selectedModel={selectedModel}
+                    onModelChange={handleModelChange}
+                    disabled={isLoading}
+                />
+            )}
 
             {/* Noise Level Control */}
             {uploadedFile && (
@@ -274,9 +290,7 @@ export default function HomePage() {
             {Object.keys(modelCache).length > 0 && (
                 <>
                     <MetricsCharts modelCache={modelCache} />
-                    <PCAAnimation />
                     <ModelPipelineDiagram modelType={selectedModel} />
-                    <BlochSphereMock modelCache={modelCache} />
 
                     {/* Reset Button */}
                     <section className="container mx-auto px-4 py-12 text-center">
