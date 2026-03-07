@@ -170,15 +170,42 @@ export default function HPQRCArchitectureSection() {
                                 Quantum Reservoir — 5-qubit superconducting transmon
                             </p>
                             <div className="bg-black/30 rounded-xl p-2">
-                                <svg viewBox="0 0 300 160" className="w-full h-32">
-                                    {/* 5 qubit lines */}
+                                <svg viewBox="0 0 310 165" className="w-full h-36">
+                                    {/* Signal-flow dots travelling left → right on each qubit wire */}
+                                    {[0, 1, 2, 3, 4].map((i) => (
+                                        <motion.circle
+                                            key={`sig-${i}`}
+                                            cy={20 + i * 28}
+                                            r={2.5}
+                                            fill="#a855f7"
+                                            initial={{ cx: 22, opacity: 0 }}
+                                            animate={{ cx: [22, 290], opacity: [0, 1, 1, 0] }}
+                                            transition={{
+                                                duration: 2.8,
+                                                delay: i * 0.4,
+                                                repeat: Infinity,
+                                                repeatDelay: 0.4,
+                                                ease: 'linear',
+                                            }}
+                                        />
+                                    ))}
+
+                                    {/* 5 qubit lines with |0⟩ labels */}
                                     {[0, 1, 2, 3, 4].map((i) => (
                                         <g key={i}>
-                                            <text x={2} y={25 + i * 28} fontSize={9} fill="#9ca3af">
-                                                q{i}
+                                            {/* |0⟩ state label */}
+                                            <text
+                                                x={1}
+                                                y={24 + i * 28}
+                                                fontSize={8}
+                                                fill="#9ca3af"
+                                                fontFamily="monospace"
+                                            >
+                                                |0⟩
                                             </text>
+                                            {/* Qubit wire */}
                                             <line
-                                                x1={18}
+                                                x1={22}
                                                 y1={20 + i * 28}
                                                 x2={290}
                                                 y2={20 + i * 28}
@@ -188,62 +215,106 @@ export default function HPQRCArchitectureSection() {
                                             />
                                         </g>
                                     ))}
-                                    {/* Gates */}
-                                    <QubitGate x={30} y={8} label="Rx" delay={0} />
-                                    <QubitGate x={30} y={36} label="Ry" delay={0.2} />
-                                    <QubitGate x={30} y={64} label="Rx" delay={0.4} />
-                                    <QubitGate x={30} y={92} label="Rz" delay={0.6} />
+
+                                    {/* Column 1 — rotation gates */}
+                                    <QubitGate x={30} y={8}   label="Rx" delay={0}   />
+                                    <QubitGate x={30} y={36}  label="Ry" delay={0.2} />
+                                    <QubitGate x={30} y={64}  label="Rx" delay={0.4} />
+                                    <QubitGate x={30} y={92}  label="Rz" delay={0.6} />
                                     <QubitGate x={30} y={120} label="Ry" delay={0.8} />
-                                    <QubitGate x={100} y={8} label="H" delay={0.1} />
-                                    <QubitGate x={100} y={36} label="CNOT" delay={0.3} />
-                                    <QubitGate x={100} y={64} label="H" delay={0.5} />
-                                    <QubitGate x={100} y={92} label="CNOT" delay={0.7} />
-                                    <QubitGate x={100} y={120} label="H" delay={0.9} />
-                                    <QubitGate x={170} y={8} label="Rz" delay={0.2} />
-                                    <QubitGate x={170} y={36} label="Rx" delay={0.4} />
-                                    <QubitGate x={170} y={64} label="CNOT" delay={0.6} />
-                                    <QubitGate x={170} y={92} label="Ry" delay={0.8} />
-                                    <QubitGate x={170} y={120} label="Rz" delay={0} />
-                                    {/* Entanglement lines */}
+
+                                    {/* Column 2 — Hadamard + CNOT gates */}
+                                    <QubitGate x={100} y={8}   label="H"    delay={0.1} />
+                                    <QubitGate x={100} y={36}  label="CNOT" delay={0.3} />
+                                    <QubitGate x={100} y={64}  label="H"    delay={0.5} />
+                                    <QubitGate x={100} y={92}  label="CNOT" delay={0.7} />
+                                    <QubitGate x={100} y={120} label="H"    delay={0.9} />
+
+                                    {/* Column 3 — rotation gates */}
+                                    <QubitGate x={170} y={8}   label="Rz"   delay={0.2} />
+                                    <QubitGate x={170} y={36}  label="Rx"   delay={0.4} />
+                                    <QubitGate x={170} y={64}  label="CNOT" delay={0.6} />
+                                    <QubitGate x={170} y={92}  label="Ry"   delay={0.8} />
+                                    <QubitGate x={170} y={120} label="Rz"   delay={0}   />
+
+                                    {/* Nearest-neighbor CNOT entanglement lines at col-2 centre (x=114) */}
                                     {[0, 1, 2, 3].map((i) => (
-                                        <motion.line
-                                            key={`ent-${i}`}
-                                            x1={114}
-                                            y1={20 + i * 28}
-                                            x2={114}
-                                            y2={20 + (i + 1) * 28}
-                                            stroke="#ec4899"
-                                            strokeWidth={2}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: [0, 1, 0] }}
-                                            transition={{
-                                                duration: 1.5,
-                                                delay: i * 0.25,
-                                                repeat: Infinity,
-                                            }}
-                                        />
+                                        <motion.g key={`ent-${i}`}>
+                                            <motion.line
+                                                x1={114}
+                                                y1={20 + i * 28}
+                                                x2={114}
+                                                y2={20 + (i + 1) * 28}
+                                                stroke="#ec4899"
+                                                strokeWidth={2}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1.5,
+                                                    delay: i * 0.25,
+                                                    repeat: Infinity,
+                                                }}
+                                            />
+                                            {/* Control dot */}
+                                            <motion.circle
+                                                cx={114}
+                                                cy={20 + i * 28}
+                                                r={3}
+                                                fill="#ec4899"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1.5,
+                                                    delay: i * 0.25,
+                                                    repeat: Infinity,
+                                                }}
+                                            />
+                                        </motion.g>
                                     ))}
-                                    {/* Measurement marks */}
+
+                                    {/* Measurement boxes (M) at x=250 */}
                                     {[0, 1, 2, 3, 4].map((i) => (
-                                        <motion.circle
-                                            key={`m-${i}`}
-                                            cx={250}
-                                            cy={20 + i * 28}
-                                            r={5}
-                                            fill="none"
-                                            stroke="#f59e0b"
-                                            strokeWidth={1.5}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: [0, 1, 0] }}
-                                            transition={{
-                                                duration: 1,
-                                                delay: 1.5 + i * 0.2,
-                                                repeat: Infinity,
-                                                repeatDelay: 1,
-                                            }}
-                                        />
+                                        <motion.g key={`m-${i}`}>
+                                            <motion.rect
+                                                x={243}
+                                                y={12 + i * 28}
+                                                width={16}
+                                                height={16}
+                                                fill="none"
+                                                stroke="#f59e0b"
+                                                strokeWidth={1.5}
+                                                rx={2}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1,
+                                                    delay: 1.5 + i * 0.2,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1,
+                                                }}
+                                            />
+                                            <motion.text
+                                                x={251}
+                                                y={23 + i * 28}
+                                                fontSize={7}
+                                                fill="#f59e0b"
+                                                textAnchor="middle"
+                                                fontWeight="bold"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1,
+                                                    delay: 1.5 + i * 0.2,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1,
+                                                }}
+                                            >
+                                                M
+                                            </motion.text>
+                                        </motion.g>
                                     ))}
-                                    <text x={10} y={155} fontSize={9} fill="#9ca3af">
+
+                                    <text x={10} y={160} fontSize={8} fill="#9ca3af">
                                         T1=50µs · T2=35µs · nearest-neighbor coupling · weak projective measurement
                                     </text>
                                 </svg>
