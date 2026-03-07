@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowDown } from 'lucide-react';
+import { Sparkles, ArrowDown, FileText } from 'lucide-react';
 
 interface HeroSectionProps {
     onUploadClick: () => void;
@@ -32,10 +32,10 @@ const PARTICLES = [
 ];
 
 const KEY_STATS = [
-    { value: '92.37%', label: 'HPQRC Accuracy', color: 'text-green-400' },
-    { value: '21.8ms', label: 'Inference Latency', color: 'text-blue-400' },
-    { value: '56%', label: 'Latency Reduction', color: 'text-purple-400' },
-    { value: '0.998', label: 'R² Score', color: 'text-pink-400' },
+    { value: '0.998', label: 'R² Score', color: 'text-green-400' },
+    { value: '1.93e-05', label: 'Best MSE (HPQRC)', color: 'text-blue-400' },
+    { value: '<2%', label: 'Relative Error', color: 'text-purple-400' },
+    { value: '0.00389', label: 'Best MAE (HPQRC)', color: 'text-pink-400' },
 ];
 
 export default function HeroSection({ onUploadClick }: HeroSectionProps) {
@@ -74,7 +74,7 @@ export default function HeroSection({ onUploadClick }: HeroSectionProps) {
                     transition={{ duration: 0.8 }}
                     className="text-center"
                 >
-                    {/* Paper badge */}
+                    {/* Documentation badge */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -82,7 +82,7 @@ export default function HeroSection({ onUploadClick }: HeroSectionProps) {
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-purple-500/40 mb-6"
                     >
                         <Sparkles className="w-4 h-4 text-purple-400" />
-                        <span className="text-sm text-purple-300">arXiv:2511.09218 · IIIT Dharwad</span>
+                        <span className="text-sm text-purple-300">Finance / QML · Partner: Quandela</span>
                     </motion.div>
 
                     {/* Title */}
@@ -105,7 +105,7 @@ export default function HeroSection({ onUploadClick }: HeroSectionProps) {
                         transition={{ delay: 0.4, duration: 0.8 }}
                         className="text-gray-400 mb-10 max-w-2xl mx-auto text-sm"
                     >
-                        Interactive demo of the HPQRC paper — explore the architecture, understand each model,
+                        Interactive demo of QashfFlow — explore the architecture, understand each model,
                         and run predictions on your own dataset.
                     </motion.p>
 
@@ -141,14 +141,15 @@ export default function HeroSection({ onUploadClick }: HeroSectionProps) {
                             Try It — Upload Dataset
                         </motion.button>
                         <motion.a
-                            href="https://arxiv.org/abs/2511.09218"
+                            href="/Qashflow-documentation.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-8 py-4 glass-card rounded-2xl text-lg font-semibold border border-white/20 hover:bg-white/10 transition-all"
+                            className="inline-flex items-center gap-2 px-8 py-4 glass-card rounded-2xl text-lg font-semibold border border-white/20 hover:bg-white/10 transition-all"
                         >
-                            Read Paper
+                            <FileText className="w-5 h-5" />
+                            View Documentation
                         </motion.a>
                     </div>
 
