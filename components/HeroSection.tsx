@@ -9,26 +9,26 @@ interface HeroSectionProps {
 
 // Fixed particle positions to avoid hydration mismatch
 const PARTICLES = [
-    { id: 0, x: 12, y: 23, size: 4.2, duration: 3.1 },
-    { id: 1, x: 87, y: 61, size: 2.8, duration: 4.5 },
-    { id: 2, x: 45, y: 8, size: 5.1, duration: 2.7 },
-    { id: 3, x: 67, y: 78, size: 3.3, duration: 3.8 },
-    { id: 4, x: 23, y: 54, size: 2.5, duration: 4.2 },
-    { id: 5, x: 78, y: 32, size: 4.0, duration: 3.5 },
-    { id: 6, x: 34, y: 89, size: 3.7, duration: 2.9 },
-    { id: 7, x: 92, y: 14, size: 2.2, duration: 4.8 },
-    { id: 8, x: 56, y: 45, size: 4.5, duration: 3.3 },
-    { id: 9, x: 11, y: 72, size: 3.0, duration: 4.0 },
-    { id: 10, x: 82, y: 91, size: 2.7, duration: 2.6 },
-    { id: 11, x: 38, y: 17, size: 3.9, duration: 3.7 },
-    { id: 12, x: 63, y: 58, size: 4.3, duration: 4.1 },
-    { id: 13, x: 19, y: 41, size: 2.4, duration: 3.4 },
-    { id: 14, x: 74, y: 83, size: 5.0, duration: 2.8 },
-    { id: 15, x: 48, y: 27, size: 3.5, duration: 4.4 },
-    { id: 16, x: 91, y: 50, size: 2.9, duration: 3.6 },
-    { id: 17, x: 28, y: 65, size: 4.1, duration: 2.5 },
-    { id: 18, x: 57, y: 95, size: 3.2, duration: 4.7 },
-    { id: 19, x: 15, y: 38, size: 2.6, duration: 3.2 },
+    { id: 0,  x: 12, y: 23, size: 4.2, duration: 3.1, color: 'bg-purple-500/30' },
+    { id: 1,  x: 87, y: 61, size: 2.8, duration: 4.5, color: 'bg-blue-500/30' },
+    { id: 2,  x: 45, y: 8,  size: 5.1, duration: 2.7, color: 'bg-pink-500/30' },
+    { id: 3,  x: 67, y: 78, size: 3.3, duration: 3.8, color: 'bg-cyan-500/30' },
+    { id: 4,  x: 23, y: 54, size: 2.5, duration: 4.2, color: 'bg-purple-400/25' },
+    { id: 5,  x: 78, y: 32, size: 4.0, duration: 3.5, color: 'bg-blue-400/30' },
+    { id: 6,  x: 34, y: 89, size: 3.7, duration: 2.9, color: 'bg-pink-400/25' },
+    { id: 7,  x: 92, y: 14, size: 2.2, duration: 4.8, color: 'bg-violet-500/30' },
+    { id: 8,  x: 56, y: 45, size: 4.5, duration: 3.3, color: 'bg-indigo-400/30' },
+    { id: 9,  x: 11, y: 72, size: 3.0, duration: 4.0, color: 'bg-fuchsia-500/25' },
+    { id: 10, x: 82, y: 91, size: 2.7, duration: 2.6, color: 'bg-cyan-400/30' },
+    { id: 11, x: 38, y: 17, size: 3.9, duration: 3.7, color: 'bg-purple-500/35' },
+    { id: 12, x: 63, y: 58, size: 4.3, duration: 4.1, color: 'bg-blue-500/25' },
+    { id: 13, x: 19, y: 41, size: 2.4, duration: 3.4, color: 'bg-pink-500/35' },
+    { id: 14, x: 74, y: 83, size: 5.0, duration: 2.8, color: 'bg-violet-400/30' },
+    { id: 15, x: 48, y: 27, size: 3.5, duration: 4.4, color: 'bg-indigo-500/25' },
+    { id: 16, x: 91, y: 50, size: 2.9, duration: 3.6, color: 'bg-fuchsia-400/30' },
+    { id: 17, x: 28, y: 65, size: 4.1, duration: 2.5, color: 'bg-cyan-500/25' },
+    { id: 18, x: 57, y: 95, size: 3.2, duration: 4.7, color: 'bg-purple-400/30' },
+    { id: 19, x: 15, y: 38, size: 2.6, duration: 3.2, color: 'bg-blue-400/25' },
 ];
 
 const KEY_STATS = [
@@ -48,7 +48,7 @@ export default function HeroSection({ onUploadClick }: HeroSectionProps) {
             {PARTICLES.map((particle) => (
                 <motion.div
                     key={particle.id}
-                    className="absolute rounded-full bg-purple-500/30"
+                    className={`absolute rounded-full ${particle.color}`}
                     style={{
                         left: `${particle.x}%`,
                         top: `${particle.y}%`,
@@ -57,7 +57,8 @@ export default function HeroSection({ onUploadClick }: HeroSectionProps) {
                     }}
                     animate={{
                         y: [0, -30, 0],
-                        opacity: [0.3, 0.8, 0.3],
+                        opacity: [0.3, 0.9, 0.3],
+                        scale: [1, 1.4, 1],
                     }}
                     transition={{
                         duration: particle.duration,

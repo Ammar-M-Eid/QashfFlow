@@ -52,7 +52,7 @@ export default function HPQRCArchitectureSection() {
         },
         {
             label: 'Photonic Reservoir',
-            sublabel: 'Si3N4 waveguide 1mm @ 1550nm · Kerr nonlinearity',
+            sublabel: '8 modes · 3 photons · C(8,3)=56 Fock states · Haar-random unitary',
             color: 'text-cyan-400',
             ring: 'ring-cyan-500/50',
             bg: 'bg-cyan-900/30',
@@ -101,67 +101,187 @@ export default function HPQRCArchitectureSection() {
                             Live Architecture Animation
                         </h3>
 
-                        {/* Photonic Reservoir SVG */}
+                        {/* Photonic Reservoir SVG — 3-photon boson sampling */}
                         <div className="mb-6">
-                            <p className="text-xs text-cyan-400 font-semibold mb-2 uppercase tracking-widest">
-                                Photonic Reservoir — Si3N4 waveguide array
-                            </p>
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-xs text-cyan-400 font-semibold uppercase tracking-widest">
+                                    Photonic Reservoir — 3-photon boson sampling
+                                </p>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-900/40 border border-cyan-500/30 text-cyan-300 font-mono">
+                                    C(8,3)=56 Fock states
+                                </span>
+                            </div>
                             <div className="bg-black/30 rounded-xl p-2">
-                                <svg viewBox="0 0 300 150" className="w-full h-28">
-                                    {/* 6 waveguide lines */}
-                                    {[0, 1, 2, 3, 4, 5].map((i) => (
+                                <svg viewBox="0 0 300 165" className="w-full h-32">
+                                    {/* 8 waveguide mode lines */}
+                                    {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
                                         <line
                                             key={i}
-                                            x1={10}
-                                            y1={20 + i * 22}
-                                            x2={290}
-                                            y2={20 + i * 22}
+                                            x1={28}
+                                            y1={16 + i * 17}
+                                            x2={272}
+                                            y2={16 + i * 17}
                                             stroke="#06b6d4"
-                                            strokeWidth={1.5}
-                                            opacity={0.5}
+                                            strokeWidth={1.2}
+                                            opacity={0.45}
                                         />
                                     ))}
-                                    {/* Traveling photons */}
-                                    {[0, 1, 2, 3, 4, 5].map((i) => (
-                                        <motion.circle
-                                            key={i}
-                                            cy={20 + i * 22}
-                                            r={3}
-                                            fill="#67e8f9"
-                                            initial={{ cx: 10, opacity: 0 }}
-                                            animate={{ cx: [10, 290], opacity: [0, 1, 1, 0] }}
-                                            transition={{
-                                                duration: 2,
-                                                delay: i * 0.3,
-                                                repeat: Infinity,
-                                                repeatDelay: 0.5,
-                                            }}
-                                        />
+
+                                    {/* Mode index labels on left */}
+                                    {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+                                        <text
+                                            key={`lbl-${i}`}
+                                            x={2}
+                                            y={20 + i * 17}
+                                            fontSize={7}
+                                            fill="#64748b"
+                                            fontFamily="monospace"
+                                        >
+                                            m{i}
+                                        </text>
                                     ))}
-                                    {/* Non-linear coupling marks */}
-                                    {[80, 150, 220].map((x) =>
-                                        [0, 1, 2, 3, 4].map((i) => (
+
+                                    {/* 3 photons entering at modes 1, 3, 6 — each a distinct color */}
+                                    {/* Photon A (cyan) — mode 1 */}
+                                    <motion.circle
+                                        cy={16 + 1 * 17}
+                                        r={4}
+                                        fill="#22d3ee"
+                                        filter="url(#glowCyan)"
+                                        initial={{ cx: 28, opacity: 0 }}
+                                        animate={{ cx: [28, 200], opacity: [0, 1, 0.9, 0] }}
+                                        transition={{ duration: 2.2, delay: 0, repeat: Infinity, repeatDelay: 1, ease: 'easeInOut' }}
+                                    />
+                                    {/* Photon B (violet) — mode 3 */}
+                                    <motion.circle
+                                        cy={16 + 3 * 17}
+                                        r={4}
+                                        fill="#a78bfa"
+                                        filter="url(#glowViolet)"
+                                        initial={{ cx: 28, opacity: 0 }}
+                                        animate={{ cx: [28, 200], opacity: [0, 1, 0.9, 0] }}
+                                        transition={{ duration: 2.2, delay: 0.15, repeat: Infinity, repeatDelay: 1, ease: 'easeInOut' }}
+                                    />
+                                    {/* Photon C (pink) — mode 6 */}
+                                    <motion.circle
+                                        cy={16 + 6 * 17}
+                                        r={4}
+                                        fill="#f472b6"
+                                        filter="url(#glowPink)"
+                                        initial={{ cx: 28, opacity: 0 }}
+                                        animate={{ cx: [28, 200], opacity: [0, 1, 0.9, 0] }}
+                                        transition={{ duration: 2.2, delay: 0.3, repeat: Infinity, repeatDelay: 1, ease: 'easeInOut' }}
+                                    />
+
+                                    {/* Beam-splitter columns — animated coupling marks between adjacent modes */}
+                                    {[80, 140, 200].map((x, ci) =>
+                                        [0, 1, 2, 3, 4, 5, 6].map((i) => (
                                             <motion.line
-                                                key={`${x}-${i}`}
+                                                key={`bs-${x}-${i}`}
                                                 x1={x}
-                                                y1={20 + i * 22}
+                                                y1={16 + i * 17}
                                                 x2={x}
-                                                y2={20 + (i + 1) * 22}
+                                                y2={16 + (i + 1) * 17}
                                                 stroke="#a78bfa"
-                                                strokeWidth={1}
+                                                strokeWidth={1.5}
+                                                strokeDasharray="3 2"
                                                 initial={{ opacity: 0 }}
-                                                animate={{ opacity: [0, 0.8, 0] }}
+                                                animate={{ opacity: [0, 0.9, 0] }}
                                                 transition={{
-                                                    duration: 1.5,
-                                                    delay: (x / 80 - 1) * 0.5 + i * 0.1,
+                                                    duration: 1.2,
+                                                    delay: ci * 0.4 + i * 0.08,
                                                     repeat: Infinity,
+                                                    repeatDelay: 0.8,
                                                 }}
                                             />
                                         ))
                                     )}
-                                    <text x={10} y={145} fontSize={9} fill="#9ca3af">1mm Si3N4 · 1550nm · Kerr nonlinearity · 0.5 dB/cm loss</text>
+
+                                    {/* Output detector boxes (D) on right — flashing when photon arrives */}
+                                    {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+                                        <motion.g key={`det-${i}`}>
+                                            <motion.rect
+                                                x={274}
+                                                y={10 + i * 17}
+                                                width={13}
+                                                height={12}
+                                                fill="none"
+                                                stroke="#f59e0b"
+                                                strokeWidth={1}
+                                                rx={2}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 0.8, 0] }}
+                                                transition={{
+                                                    duration: 0.9,
+                                                    delay: 1.8 + i * 0.1,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1.5,
+                                                }}
+                                            />
+                                            <motion.text
+                                                x={280.5}
+                                                y={19 + i * 17}
+                                                fontSize={6}
+                                                fill="#f59e0b"
+                                                textAnchor="middle"
+                                                fontWeight="bold"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 0.8, 0] }}
+                                                transition={{
+                                                    duration: 0.9,
+                                                    delay: 1.8 + i * 0.1,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1.5,
+                                                }}
+                                            >
+                                                D
+                                            </motion.text>
+                                        </motion.g>
+                                    ))}
+
+                                    {/* Input photon legend */}
+                                    <circle cx={10} cy={155} r={3} fill="#22d3ee" />
+                                    <text x={16} y={158} fontSize={7} fill="#9ca3af">γ₁</text>
+                                    <circle cx={32} cy={155} r={3} fill="#a78bfa" />
+                                    <text x={38} y={158} fontSize={7} fill="#9ca3af">γ₂</text>
+                                    <circle cx={54} cy={155} r={3} fill="#f472b6" />
+                                    <text x={60} y={158} fontSize={7} fill="#9ca3af">γ₃</text>
+                                    <text x={80} y={158} fontSize={7} fill="#64748b">
+                                        — 3 input photons · 8 modes · Si3N4 1550nm
+                                    </text>
+
+                                    {/* SVG filter defs for photon glow */}
+                                    <defs>
+                                        <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
+                                            <feGaussianBlur stdDeviation="2" result="blur" />
+                                            <feMerge>
+                                                <feMergeNode in="blur" />
+                                                <feMergeNode in="SourceGraphic" />
+                                            </feMerge>
+                                        </filter>
+                                        <filter id="glowViolet" x="-50%" y="-50%" width="200%" height="200%">
+                                            <feGaussianBlur stdDeviation="2" result="blur" />
+                                            <feMerge>
+                                                <feMergeNode in="blur" />
+                                                <feMergeNode in="SourceGraphic" />
+                                            </feMerge>
+                                        </filter>
+                                        <filter id="glowPink" x="-50%" y="-50%" width="200%" height="200%">
+                                            <feGaussianBlur stdDeviation="2" result="blur" />
+                                            <feMerge>
+                                                <feMergeNode in="blur" />
+                                                <feMergeNode in="SourceGraphic" />
+                                            </feMerge>
+                                        </filter>
+                                    </defs>
                                 </svg>
                             </div>
+                            <p className="text-xs text-gray-500 mt-1.5">
+                                3 photons (γ₁ γ₂ γ₃) enter at modes m1, m3, m6 → Haar-random unitary
+                                interferometer → boson sampling yields{' '}
+                                <span className="text-cyan-400 font-semibold">C(8,3)=56</span> Fock-state
+                                probabilities used as quantum features
+                            </p>
                         </div>
 
                         {/* Quantum Circuit SVG */}
@@ -170,15 +290,42 @@ export default function HPQRCArchitectureSection() {
                                 Quantum Reservoir — 5-qubit superconducting transmon
                             </p>
                             <div className="bg-black/30 rounded-xl p-2">
-                                <svg viewBox="0 0 300 160" className="w-full h-32">
-                                    {/* 5 qubit lines */}
+                                <svg viewBox="0 0 310 165" className="w-full h-36">
+                                    {/* Signal-flow dots travelling left → right on each qubit wire */}
+                                    {[0, 1, 2, 3, 4].map((i) => (
+                                        <motion.circle
+                                            key={`sig-${i}`}
+                                            cy={20 + i * 28}
+                                            r={2.5}
+                                            fill="#a855f7"
+                                            initial={{ cx: 22, opacity: 0 }}
+                                            animate={{ cx: [22, 290], opacity: [0, 1, 1, 0] }}
+                                            transition={{
+                                                duration: 2.8,
+                                                delay: i * 0.4,
+                                                repeat: Infinity,
+                                                repeatDelay: 0.4,
+                                                ease: 'linear',
+                                            }}
+                                        />
+                                    ))}
+
+                                    {/* 5 qubit lines with |0⟩ labels */}
                                     {[0, 1, 2, 3, 4].map((i) => (
                                         <g key={i}>
-                                            <text x={2} y={25 + i * 28} fontSize={9} fill="#9ca3af">
-                                                q{i}
+                                            {/* |0⟩ state label */}
+                                            <text
+                                                x={1}
+                                                y={24 + i * 28}
+                                                fontSize={8}
+                                                fill="#9ca3af"
+                                                fontFamily="monospace"
+                                            >
+                                                |0⟩
                                             </text>
+                                            {/* Qubit wire */}
                                             <line
-                                                x1={18}
+                                                x1={22}
                                                 y1={20 + i * 28}
                                                 x2={290}
                                                 y2={20 + i * 28}
@@ -188,62 +335,106 @@ export default function HPQRCArchitectureSection() {
                                             />
                                         </g>
                                     ))}
-                                    {/* Gates */}
-                                    <QubitGate x={30} y={8} label="Rx" delay={0} />
-                                    <QubitGate x={30} y={36} label="Ry" delay={0.2} />
-                                    <QubitGate x={30} y={64} label="Rx" delay={0.4} />
-                                    <QubitGate x={30} y={92} label="Rz" delay={0.6} />
+
+                                    {/* Column 1 — rotation gates */}
+                                    <QubitGate x={30} y={8}   label="Rx" delay={0}   />
+                                    <QubitGate x={30} y={36}  label="Ry" delay={0.2} />
+                                    <QubitGate x={30} y={64}  label="Rx" delay={0.4} />
+                                    <QubitGate x={30} y={92}  label="Rz" delay={0.6} />
                                     <QubitGate x={30} y={120} label="Ry" delay={0.8} />
-                                    <QubitGate x={100} y={8} label="H" delay={0.1} />
-                                    <QubitGate x={100} y={36} label="CNOT" delay={0.3} />
-                                    <QubitGate x={100} y={64} label="H" delay={0.5} />
-                                    <QubitGate x={100} y={92} label="CNOT" delay={0.7} />
-                                    <QubitGate x={100} y={120} label="H" delay={0.9} />
-                                    <QubitGate x={170} y={8} label="Rz" delay={0.2} />
-                                    <QubitGate x={170} y={36} label="Rx" delay={0.4} />
-                                    <QubitGate x={170} y={64} label="CNOT" delay={0.6} />
-                                    <QubitGate x={170} y={92} label="Ry" delay={0.8} />
-                                    <QubitGate x={170} y={120} label="Rz" delay={0} />
-                                    {/* Entanglement lines */}
+
+                                    {/* Column 2 — Hadamard + CNOT gates */}
+                                    <QubitGate x={100} y={8}   label="H"    delay={0.1} />
+                                    <QubitGate x={100} y={36}  label="CNOT" delay={0.3} />
+                                    <QubitGate x={100} y={64}  label="H"    delay={0.5} />
+                                    <QubitGate x={100} y={92}  label="CNOT" delay={0.7} />
+                                    <QubitGate x={100} y={120} label="H"    delay={0.9} />
+
+                                    {/* Column 3 — rotation gates */}
+                                    <QubitGate x={170} y={8}   label="Rz"   delay={0.2} />
+                                    <QubitGate x={170} y={36}  label="Rx"   delay={0.4} />
+                                    <QubitGate x={170} y={64}  label="CNOT" delay={0.6} />
+                                    <QubitGate x={170} y={92}  label="Ry"   delay={0.8} />
+                                    <QubitGate x={170} y={120} label="Rz"   delay={0}   />
+
+                                    {/* Nearest-neighbor CNOT entanglement lines at col-2 centre (x=114) */}
                                     {[0, 1, 2, 3].map((i) => (
-                                        <motion.line
-                                            key={`ent-${i}`}
-                                            x1={114}
-                                            y1={20 + i * 28}
-                                            x2={114}
-                                            y2={20 + (i + 1) * 28}
-                                            stroke="#ec4899"
-                                            strokeWidth={2}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: [0, 1, 0] }}
-                                            transition={{
-                                                duration: 1.5,
-                                                delay: i * 0.25,
-                                                repeat: Infinity,
-                                            }}
-                                        />
+                                        <motion.g key={`ent-${i}`}>
+                                            <motion.line
+                                                x1={114}
+                                                y1={20 + i * 28}
+                                                x2={114}
+                                                y2={20 + (i + 1) * 28}
+                                                stroke="#ec4899"
+                                                strokeWidth={2}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1.5,
+                                                    delay: i * 0.25,
+                                                    repeat: Infinity,
+                                                }}
+                                            />
+                                            {/* Control dot */}
+                                            <motion.circle
+                                                cx={114}
+                                                cy={20 + i * 28}
+                                                r={3}
+                                                fill="#ec4899"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1.5,
+                                                    delay: i * 0.25,
+                                                    repeat: Infinity,
+                                                }}
+                                            />
+                                        </motion.g>
                                     ))}
-                                    {/* Measurement marks */}
+
+                                    {/* Measurement boxes (M) at x=250 */}
                                     {[0, 1, 2, 3, 4].map((i) => (
-                                        <motion.circle
-                                            key={`m-${i}`}
-                                            cx={250}
-                                            cy={20 + i * 28}
-                                            r={5}
-                                            fill="none"
-                                            stroke="#f59e0b"
-                                            strokeWidth={1.5}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: [0, 1, 0] }}
-                                            transition={{
-                                                duration: 1,
-                                                delay: 1.5 + i * 0.2,
-                                                repeat: Infinity,
-                                                repeatDelay: 1,
-                                            }}
-                                        />
+                                        <motion.g key={`m-${i}`}>
+                                            <motion.rect
+                                                x={243}
+                                                y={12 + i * 28}
+                                                width={16}
+                                                height={16}
+                                                fill="none"
+                                                stroke="#f59e0b"
+                                                strokeWidth={1.5}
+                                                rx={2}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1,
+                                                    delay: 1.5 + i * 0.2,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1,
+                                                }}
+                                            />
+                                            <motion.text
+                                                x={251}
+                                                y={23 + i * 28}
+                                                fontSize={7}
+                                                fill="#f59e0b"
+                                                textAnchor="middle"
+                                                fontWeight="bold"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0, 1, 0] }}
+                                                transition={{
+                                                    duration: 1,
+                                                    delay: 1.5 + i * 0.2,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1,
+                                                }}
+                                            >
+                                                M
+                                            </motion.text>
+                                        </motion.g>
                                     ))}
-                                    <text x={10} y={155} fontSize={9} fill="#9ca3af">
+
+                                    <text x={10} y={160} fontSize={8} fill="#9ca3af">
                                         T1=50µs · T2=35µs · nearest-neighbor coupling · weak projective measurement
                                     </text>
                                 </svg>
