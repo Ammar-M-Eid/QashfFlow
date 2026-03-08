@@ -11,15 +11,15 @@ import ModelSelector from '@/components/ModelSelector';
 import PredictionPanel from '@/components/PredictionPanel';
 import MetricsCharts from '@/components/MetricsCharts';
 import ModelPipelineDiagram from '@/components/ModelPipelineDiagram';
+import TeamSection from '@/components/TeamSection';
 import { ModelType, PredictionResult, ModelCache, DataRow, BackendPredictionResponse } from '@/lib/types';
 import { normalizePredictionResponse } from '@/lib/prediction-adapter';
-import { RefreshCw, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
+import { RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function HomePage() {
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [previewData, setPreviewData] = useState<DataRow[]>([]);
     const [selectedModel, setSelectedModel] = useState<ModelType>('ML');
-    const [noiseLevel, setNoiseLevel] = useState<number>(0);
     const [modelCache, setModelCache] = useState<ModelCache>({});
     const [currentResult, setCurrentResult] = useState<PredictionResult | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +55,7 @@ export default function HomePage() {
     // Run prediction API call
     const runPrediction = async (file: File, model: ModelType, useCache: boolean = true) => {
         // Check cache first
-        if (useCache && modelCache[model] && noiseLevel === 0) {
+        if (useCache && modelCache[model]) {
             setCurrentResult(modelCache[model]!);
             setToast({ type: 'success', message: `Loaded cached ${model} predictions` });
             return;
@@ -68,7 +68,6 @@ export default function HomePage() {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('model_type', model);
-            formData.append('noise_level', noiseLevel.toString());
 
             const response = await fetch('/api/predict', {
                 method: 'POST',
@@ -83,16 +82,13 @@ export default function HomePage() {
             const rawResult: BackendPredictionResponse = await response.json();
             const result: PredictionResult = normalizePredictionResponse(rawResult);
 
-            // Update cache and current result (only cache noise-free results)
-            if (noiseLevel === 0) {
-                setModelCache((prev) => ({
-                    ...prev,
-                    [model]: result,
-                }));
-            }
+            // Update cache and current result
+            setModelCache((prev) => ({
+                ...prev,
+                [model]: result,
+            }));
             setCurrentResult(result);
-            const noiseMsg = noiseLevel > 0 ? ` with ${(noiseLevel * 100).toFixed(0)}% noise` : '';
-            setToast({ type: 'success', message: `${model} inference completed successfully${noiseMsg}` });
+            setToast({ type: 'success', message: `${model} inference completed successfully` });
         } catch (err) {
             const message = err instanceof Error ? err.message : 'An unexpected error occurred';
             setError(message);
@@ -185,56 +181,6 @@ export default function HomePage() {
                 />
             )}
 
-            {/* Noise Level Control */}
-            {uploadedFile && (
-                <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="container mx-auto px-4 py-6"
-                >
-                    <div className="glass-card rounded-xl p-6 max-w-2xl mx-auto">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                                <Zap className="w-5 h-5 text-purple-400" />
-                                <h3 className="text-lg font-semibold">Noise Simulation</h3>
-                            </div>
-                            <span className="text-sm text-gray-400">
-                                {noiseLevel === 0 ? 'No Noise' : `${(noiseLevel * 100).toFixed(0)}% Noise`}
-                            </span>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="0.3"
-                            step="0.05"
-                            value={noiseLevel}
-                            onChange={(e) => setNoiseLevel(parseFloat(e.target.value))}
-                            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                            disabled={isLoading}
-                        />
-                        <div className="flex justify-between text-xs text-gray-500 mt-2">
-                            <span>0%</span>
-                            <span>10%</span>
-                            <span>15%</span>
-                            <span>30%</span>
-                        </div>
-                        {noiseLevel > 0 && (
-                            <motion.button
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => runPrediction(uploadedFile, selectedModel, false)}
-                                disabled={isLoading}
-                                className="mt-4 w-full px-4 py-2 bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500/40 rounded-lg transition-colors disabled:opacity-50"
-                            >
-                                Apply Noise & Re-predict
-                            </motion.button>
-                        )}
-                    </div>
-                </motion.section>
-            )}
-
             {/* Selected Model Accuracy Display */}
             {currentAccuracy && (
                 <motion.section
@@ -268,7 +214,7 @@ export default function HomePage() {
             )}
 
             {/* Prediction Output */}
-            <PredictionPanel result={currentResult} isLoading={isLoading} />
+            <PredictionPanel result={currentResult} isLoading={isLoading} modelType={selectedModel} />
 
             {/* Loading Skeletons */}
             {isLoading && (
@@ -306,6 +252,9 @@ export default function HomePage() {
                     </section>
                 </>
             )}
+
+            {/* Team Section */}
+            <TeamSection />
         </main>
     );
 }

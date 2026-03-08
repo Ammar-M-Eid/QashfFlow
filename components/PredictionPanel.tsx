@@ -1,16 +1,25 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Download, Clock, Target, Activity } from 'lucide-react';
-import { PredictionResult } from '@/lib/types';
+import { TrendingUp, TrendingDown, Download, Clock, Target, Activity, Cpu } from 'lucide-react';
+import { PredictionResult, ModelType } from '@/lib/types';
 import { formatNumber, downloadCSV } from '@/lib/utils';
 
 interface PredictionPanelProps {
     result: PredictionResult | null;
     isLoading: boolean;
+    modelType?: ModelType;
 }
 
-export default function PredictionPanel({ result, isLoading }: PredictionPanelProps) {
+const MODEL_LABELS: Record<ModelType, string> = {
+    ML: 'Classical ML',
+    QML: 'Quantum ML (QML)',
+    QRC: 'Quantum Reservoir Computing (QRC)',
+    QRC5: 'Quantum Reservoir Computing — 5 qubits (QRC5)',
+    HPQRC: 'Hybrid Photonic-QRC (HPQRC)',
+};
+
+export default function PredictionPanel({ result, isLoading, modelType }: PredictionPanelProps) {
     if (isLoading) {
         return (
             <section className="container mx-auto px-4 py-12">
@@ -64,7 +73,17 @@ export default function PredictionPanel({ result, isLoading }: PredictionPanelPr
                 transition={{ duration: 0.5 }}
             >
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-3xl font-bold">Prediction Results</h2>
+                    <div>
+                        <h2 className="text-3xl font-bold">Prediction Results</h2>
+                        {modelType && (
+                            <div className="flex items-center gap-2 mt-2">
+                                <Cpu className="w-4 h-4 text-purple-400" />
+                                <span className="text-sm text-purple-300 font-medium">
+                                    {MODEL_LABELS[modelType]}
+                                </span>
+                            </div>
+                        )}
+                    </div>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
