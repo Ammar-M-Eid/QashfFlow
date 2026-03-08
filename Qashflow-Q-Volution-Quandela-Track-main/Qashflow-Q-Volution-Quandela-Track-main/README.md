@@ -1,1 +1,0 @@
-# Q-Volution-Hackathon-Quandela-Problem-
